@@ -1,0 +1,9 @@
+{
+  "name": "bloomx-fullstack",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "start": "npm run dev"
+  }
+}
