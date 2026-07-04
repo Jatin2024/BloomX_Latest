@@ -1,7 +1,29 @@
 import { useEffect, useState } from 'react';
 
+const services = [
+  'Custom website development',
+  'React and Angular web apps',
+  'Node.js and .NET APIs',
+  'Cloud deployment on AWS, Azure, and GCP'
+];
+
+const technologies = [
+  'React.js',
+  'Angular',
+  'Node.js',
+  'Express.js',
+  'HTML',
+  'CSS',
+  'JavaScript',
+  '.NET',
+  'MongoDB',
+  'AWS',
+  'Azure',
+  'GCP'
+];
+
 function App() {
-  const [message, setMessage] = useState('Loading...');
+  const [message, setMessage] = useState('Checking backend connectivity...');
   const [name, setName] = useState('');
   const [status, setStatus] = useState('');
 
@@ -26,21 +48,71 @@ function App() {
   };
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: 600, margin: '40px auto' }}>
-      <h1>BloomX Integration Test</h1>
-      <p>Backend status: {message}</p>
+    <div className="page">
+      <header className="hero">
+        <div className="hero-content">
+          <p className="eyebrow">BloomX Studio</p>
+          <h1>We build modern websites and digital experiences that grow your business.</h1>
+          <p>
+            From polished marketing sites to full-stack web applications, our team combines React,
+            Angular, Node.js, .NET, Express.js, MongoDB, and cloud platforms to deliver reliable solutions.
+          </p>
+          <div className="hero-actions">
+            <a className="btn btn-primary" href="#contact">Book a project call</a>
+            <a className="btn btn-secondary" href="#services">Explore services</a>
+          </div>
+          <p className="status">Backend status: {message}</p>
+        </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your name"
-          style={{ flex: 1, padding: '8px' }}
-        />
-        <button type="submit">Send</button>
-      </form>
+        <div className="hero-card">
+          <h2>Our focus</h2>
+          <ul>
+            <li>Fast, responsive websites</li>
+            <li>Scalable web applications</li>
+            <li>Secure APIs and databases</li>
+            <li>Cloud-ready deployment</li>
+          </ul>
+        </div>
+      </header>
 
-      {status && <p style={{ marginTop: '12px' }}>{status}</p>}
+      <section id="services" className="section">
+        <h2>What we deliver</h2>
+        <div className="card-grid">
+          {services.map((service) => (
+            <div className="card" key={service}>
+              <h3>{service}</h3>
+              <p>Tailored solutions for startups, growing companies, and enterprise teams.</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>Technologies we use</h2>
+        <div className="chip-list">
+          {technologies.map((tech) => (
+            <span className="chip" key={tech}>{tech}</span>
+          ))}
+        </div>
+      </section>
+
+      <section id="contact" className="section contact-section">
+        <div>
+          <h2>Let’s build something impactful</h2>
+          <p>Share a few details and we’ll help shape your next web project.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="contact-form">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name"
+          />
+          <button type="submit">Start conversation</button>
+        </form>
+
+        {status && <p className="form-status">{status}</p>}
+      </section>
     </div>
   );
 }

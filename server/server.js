@@ -17,7 +17,7 @@ const messageSchema = new mongoose.Schema({
 const Message = mongoose.model('Message', messageSchema);
 
 app.get('/api/health', (req, res) => {
-  res.json({ message: 'Backend is running' });
+  res.json({ message: 'BloomX API is ready for website development solutions.' });
 });
 
 app.post('/api/messages', async (req, res) => {
@@ -38,7 +38,7 @@ app.post('/api/messages', async (req, res) => {
     }
   }
 
-  return res.json({ message: `Received from frontend: ${name}` });
+  return res.json({ message: `Thanks ${name}! Our team will follow up about your web project.` });
 });
 
 function startServer(port) {
