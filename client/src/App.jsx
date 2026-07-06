@@ -49,6 +49,15 @@ function App() {
 
   return (
     <div className="page">
+      <nav className="navbar">
+        <div className="brand">BloomX</div>
+        <div className="nav-links">
+          <a href="#services">Services</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+
       <header className="hero">
         <div className="hero-content">
           <p className="eyebrow">BloomX Studio</p>
@@ -74,6 +83,17 @@ function App() {
           </ul>
         </div>
       </header>
+
+      <section id="about" className="section intro-strip">
+        <div>
+          <h2>Why companies choose BloomX</h2>
+          <p>We blend strategy, design, development, and cloud deployment into one dependable partnership.</p>
+        </div>
+        <div className="quote-box">
+          <strong>Reliable delivery</strong>
+          <p>From landing pages to scalable platforms, we build with performance and growth in mind.</p>
+        </div>
+      </section>
 
       <section id="services" className="section">
         <h2>What we deliver</h2>
@@ -113,6 +133,14 @@ function App() {
 
         {status && <p className="form-status">{status}</p>}
       </section>
+
+      <footer className="footer">
+        <p>© 2026 BloomX. Website development solutions for modern businesses.</p>
+        <div className="footer-links">
+          <a href="#services">Services</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </footer>
     </div>
   );
 }
