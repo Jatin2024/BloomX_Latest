@@ -1,0 +1,143 @@
+{
+  "hero": {
+    "eyebrow": "Technology • Design • Cloud • Growth",
+    "headline": "Building Digital Experiences That Drive Business Growth",
+    "description": "BloomX partners with ambitious teams to craft premium digital products, scalable business platforms, and cloud-powered systems. We blend modern design with robust engineering to build solutions that strengthen brands, improve operations, and deliver lasting customer value.",
+    "primaryButton": "Start Your Project",
+    "secondaryButton": "View Our Work",
+    "captionBadge": "Design + Growth",
+    "captionText": "Strategic digital experiences built for growth, reliability, and long-term value.",
+    "backendStatusPrefix": "Backend status:"
+  },
+  "home": {
+    "whoTitle": "More than a digital agency",
+    "whoDescription": "BloomX is a technology and digital solutions partner that helps ambitious teams launch scalable products, modernize systems, and make every customer interaction feel premium.",
+    "whoParagraphs": [
+      "We begin by aligning every solution with your business goals, audience, and product roadmap.",
+      "Our team designs and engineers polished platforms, portals, and cloud systems that grow with your organization.",
+      "We make your digital products faster, more dependable, and easier to manage so you can focus on growth."
+    ],
+    "whoBadges": ["Business-first solutions", "Modern digital strategy"],
+    "whoFeatures": [
+      {"label": "Platform design", "icon": "⚙️", "title": "Scalable products", "description": "Modern applications and digital platforms built to support growing teams and demand."},
+      {"label": "Cloud systems", "icon": "☁️", "title": "Cloud-ready systems", "description": "Infrastructure and deployments designed for reliability, performance, and future growth."},
+      {"label": "Experience", "icon": "🎨", "title": "User-first design", "description": "Interfaces that feel intuitive, polished, and aligned to your brand."},
+      {"label": "Connected systems", "icon": "🔗", "title": "Integration-ready", "description": "APIs, automation, and workflows that connect your business systems seamlessly."}
+    ],
+    "serviceTitle": "Products we build",
+    "serviceDescription": "We deliver digital products that are designed to perform and built to scale.",
+    "serviceCards": [
+      {
+        "label": "Customer touchpoints",
+        "icon": "✨",
+        "title": "Digital experiences",
+        "description": "Brand websites, landing pages, and customer-facing interfaces designed to build trust and capture attention."
+      },
+      {
+        "label": "Business systems",
+        "icon": "🧩",
+        "title": "Custom platforms",
+        "description": "Web portals, SaaS tools, and business systems built to support your processes and your growth." 
+      },
+      {
+        "label": "Infrastructure",
+        "icon": "☁️",
+        "title": "Cloud solutions",
+        "description": "Managed deployments, infrastructure, and monitoring on AWS, Azure, or GCP for reliable scale." 
+      },
+      {
+        "label": "Automation",
+        "icon": "🔗",
+        "title": "API & integrations",
+        "description": "Connected systems and automation that streamline operations and improve team efficiency." 
+      }
+    ],
+    "whyTitle": "Why companies choose BloomX",
+    "whyDescription": "We deliver dependable digital solutions through clear communication, modern technology, and a business-focused approach.",
+    "whyBullets": [
+      {
+        "title": "Product thinking over project thinking",
+        "description": "We treat every engagement like a product roadmap, so the work is guided by business outcomes instead of one-off deliverables."
+      },
+      {
+        "title": "Performance, security, and scale",
+        "description": "We design and engineer with reliability in mind, building systems that stay fast, secure, and ready to grow."
+      },
+      {
+        "title": "Transparent timelines and handoffs",
+        "description": "You get clear milestones, thoughtful communication, and a delivery process that stays easy to follow."
+      },
+      {
+        "title": "Proactive support after launch",
+        "description": "We stay involved after release so your product keeps improving as your business evolves."
+      }
+    ],
+    "trustPrinciples": [
+      "Business-first thinking",
+      "Proven technical expertise",
+      "Transparent delivery",
+      "Modern design systems",
+      "Reliable cloud infrastructure",
+      "Continuous support"
+    ],
+    "ctaTitle": "Ready to move from concept to launch?",
+    "ctaDescription": "Let’s discuss your project, define the right solution, and deliver a digital experience built to grow.",
+    "ctaPrimary": "Book a Free Consultation",
+    "ctaSecondary": "Start a Conversation"
+  },
+  "services": {
+    "pageTitle": "What we deliver",
+    "strategyDescription": "Digital strategy and product planning that align your offering with customer needs and business goals.",
+    "designDescription": "Modern, polished interfaces built to increase trust, engagement, and conversion.",
+    "deliveryDescription": "Reliable delivery, launch support, and deployment processes that keep your project on schedule.",
+    "industryTitle": "Industries we serve",
+    "industryDescription": "We partner with teams that need modern digital products, clear messaging, and scalable technology solutions.",
+    "technologyTitle": "Technologies we use"
+  },
+  "careers": {
+    "pageTitle": "Open career opportunities",
+    "subtitle": "Join BloomX and help build modern digital products, platforms, and cloud solutions for ambitious teams.",
+    "applyTitle": "Apply to join our team",
+    "applyDescription": "Tell us about your experience, attach your resume, and show why you'd be a great addition to BloomX.",
+    "companyIntro": "At BloomX, we work with fast-moving teams to design and build digital products that solve real business problems.",
+    "whyApplyTitle": "Why apply at BloomX",
+    "whyApplyPoints": [
+      "Work on meaningful products across design, engineering, and cloud delivery.",
+      "Collaborate with a team that values ownership, clarity, and modern craft.",
+      "Grow your skills through real client impact and continuous learning."
+    ],
+    "benefits": [
+      "Remote-first collaboration",
+      "Product-focused projects",
+      "Learning-driven culture"
+    ]
+  },
+  "contact": {
+    "pageTitle": "Send an enquiry",
+    "introTitle": "Tell us about your project",
+    "introDescription": "Need a website, product, or cloud solution? Share your goals and what you want your digital experience to achieve.",
+    "highlightTitle": "What happens next",
+    "highlightPoints": [
+      "We review your enquiry and align on your goals.",
+      "You get a clear plan with scope, timeline, and delivery approach.",
+      "Our team starts execution with transparent updates from day one."
+    ],
+    "chips": ["Fast response", "Clear roadmap", "Product-first delivery"],
+    "directEmail": "hello@bloomx.com",
+    "responseTime": "Typical response within 24 hours"
+  },
+  "footer": {
+    "headline": "BloomX",
+    "tagline": "Technology and digital product solutions for modern businesses.",
+    "description": "We help ambitious teams launch polished products, scale digital operations, and keep their systems reliable as they grow.",
+    "highlights": ["Product strategy", "Digital experiences", "Cloud engineering"],
+    "services": ["Digital experiences", "Custom platforms", "Cloud solutions", "API & integrations"],
+    "contact": {
+      "email": "hello@bloomx.com",
+      "phone": "+1 (555) 012-3456",
+      "location": "Remote-first, serving clients worldwide"
+    },
+    "note": "Built for teams that want a clear process and measurable outcomes.",
+    "copy": "© 2026 BloomX. Technology and digital product solutions for modern businesses."
+  }
+}
