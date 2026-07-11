@@ -7,6 +7,7 @@ import ContactPage from './pages/ContactPage';
 import NotFoundPage from './pages/NotFoundPage';
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
+import ScrollToTop from './components/ScrollToTop';
 import { pageTransitionProps } from './utils/motion';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
   return (
     <MotionConfig reducedMotion="user">
       <LazyMotion features={domAnimation}>
+        <ScrollToTop />
         <div className="page">
           <SiteHeader />
 
