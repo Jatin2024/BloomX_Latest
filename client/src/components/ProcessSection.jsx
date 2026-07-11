@@ -7,6 +7,8 @@ export default function ProcessSection({ steps, industries }) {
     <motion.section className="py-4 interactive-section" {...fadeUpProps}>
       <div className="row gx-4 gy-4 align-items-stretch">
         <div className="col-lg-6">
+
+          {/* gdgjhcdgghdc */}
           <motion.div className="process-panel h-100 p-4 p-lg-5 rounded-4 shadow-lg" whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 24 }} viewport={{ once: false, amount: 0.2 }} transition={{ duration: 0.55, delay: 0.05, ease: 'easeOut' }}>
             <div className="d-flex align-items-center justify-content-between gap-3 mb-4 flex-nowrap">
               <div>
