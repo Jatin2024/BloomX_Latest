@@ -5,7 +5,7 @@ import { easing, fadeUpProps } from '../utils/motion';
 
 const { hero } = siteContent;
 
-export default function HeroSection({ message }) {
+export default function HeroSection() {
   return (
     <motion.section className="py-5" {...fadeUpProps}>
       <div className="row align-items-center gy-4">
@@ -28,7 +28,6 @@ export default function HeroSection({ message }) {
               <NavLink className="btn btn-outline-success btn-lg" to="/services">{hero.secondaryButton}</NavLink>
             </motion.div>
           </motion.div>
-          <motion.p className="text-success mt-4 mb-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.46, duration: 0.45, ease: easing }}>{hero.backendStatusPrefix} {message}</motion.p>
         </motion.div>
         <motion.div
           className="col-lg-5"

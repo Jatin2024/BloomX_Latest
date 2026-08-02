@@ -19,19 +19,19 @@ export const services = [
 
 export const portfolio = [
   {
-    title: 'Operations platform',
-    description: 'A custom platform that streamlined workflows and increased team productivity.',
-    image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80'
+    title: 'Laser Art Store (E-Commerce Platform)',
+    description: 'Multi-vendor gifting and laser engraving e-commerce platform with auth, catalog, filters, wishlist, cart, checkout, tracking, reviews, coupons, and full admin analytics. Built with React, Node, Express, MongoDB, JWT, Stripe/Razorpay, and Cloudinary.',
+    image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=900&q=80'
   },
   {
-    title: 'Analytics dashboard',
-    description: 'A data-driven dashboard with visual reporting that helps teams make faster decisions.',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80'
+    title: 'BloomHR (Employee Management / HRMS)',
+    description: 'HRMS platform for employee operations with attendance, leave, payroll, departments, roles, permissions, reports, notifications, and charts. Includes employee, HR, and admin modules for complete workforce management.',
+    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80'
   },
   {
-    title: 'Cloud platform',
-    description: 'A scalable cloud deployment that improved uptime, performance, and release velocity.',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80'
+    title: 'BloomBookings (Appointment Management SaaS)',
+    description: 'Cross-industry booking SaaS for clinics, salons, gyms, consultants, lawyers, and tutors with appointments, calendar, payments, notifications, staff management, slots, services, revenue, and branch analytics.',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80'
   }
 ];
 

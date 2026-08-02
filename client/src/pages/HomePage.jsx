@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import siteContent from '../content/siteContent.json';
 import HeroSection from '../components/HeroSection';
@@ -12,19 +11,11 @@ import { processSteps, industries, featureGroups } from '../components/DataSecti
 import { fadeUpProps } from '../utils/motion';
 
 export default function HomePage() {
-  const [message, setMessage] = useState('Checking backend connectivity...');
   const { home } = siteContent;
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch(() => setMessage('Backend not reachable'));
-  }, []);
 
   return (
     <main>
-      <HeroSection message={message} />
+      <HeroSection />
 
       <motion.section className="py-4 interactive-section" {...fadeUpProps}>
         <div className="row gx-4 gy-4 align-items-center">

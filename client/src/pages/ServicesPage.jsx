@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { NavLink } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
 import siteContent from '../content/siteContent.json';
 import { services, portfolio, industries, technologies } from '../components/DataSections';
@@ -37,7 +38,7 @@ export default function ServicesPage() {
       <motion.section className="py-4 interactive-section services-hero-section" {...fadeUpProps}>
         <div className="row g-4 align-items-center">
           <div className="col-lg-7">
-            <div className="section-eyebrow mb-3">Services</div>
+            <div className="section-eyebrow mb-3">{servicesContent.eyebrow}</div>
             <PageHeader title={servicesContent.pageTitle} subtitle="Scalable digital products, modern experiences, and reliable technical delivery designed to move your business forward." />
           </div>
           <div className="col-lg-5">
@@ -48,9 +49,9 @@ export default function ServicesPage() {
               viewport={{ once: false, amount: 0.2 }}
               transition={{ duration: 0.55, delay: 0.08, ease: 'easeOut' }}
             >
-              <div className="services-hero-metric">End-to-end delivery</div>
-              <h3>From strategy to launch, every service is built to feel cohesive, premium, and outcome-focused.</h3>
-              <p className="mb-0">We combine product thinking, design systems, and engineering execution so each engagement feels like one joined-up solution rather than disconnected tasks.</p>
+              <div className="services-hero-metric">{servicesContent.heroMetric}</div>
+              <h3>{servicesContent.heroTitle}</h3>
+              <p className="mb-0">{servicesContent.heroDescription}</p>
             </motion.div>
           </div>
         </div>
@@ -77,8 +78,8 @@ export default function ServicesPage() {
 
       <motion.section className="py-4 interactive-section services-pillars-section" {...fadeUpProps}>
         <div className="text-center mb-5">
-          <div className="section-eyebrow mb-3">How we deliver</div>
-          <h2 className="mb-3">A service model designed to stay clear from idea to launch</h2>
+          <div className="section-eyebrow mb-3">{servicesContent.deliveryEyebrow}</div>
+          <h2 className="mb-3">{servicesContent.deliveryTitle}</h2>
         </div>
         <div className="row g-4">
           {deliveryPillars.map((pillar, index) => (
@@ -95,17 +96,22 @@ export default function ServicesPage() {
       </motion.section>
 
       <section className="py-4 interactive-section services-portfolio-section">
-        <PageHeader title="Portfolio highlights" />
+        <PageHeader title={servicesContent.portfolioTitle} />
         <div className="row g-4">
           {portfolio.map((item, index) => (
             <div className="col-md-6 col-lg-4" key={item.title}>
-              <motion.div className="card h-100 shadow-sm border-0 overflow-hidden services-portfolio-card" {...fadeUpProps} transition={{ ...fadeUpProps.transition, delay: index * 0.1 }} whileHover={{ y: -10, scale: 1.01 }}>
-                <img src={item.image} className="card-img-top services-portfolio-image" alt={item.title} loading="lazy" />
-                <div className="card-body p-4">
-                  <div className="services-card-label mb-3">Case study</div>
-                  <h5>{item.title}</h5>
-                  <p className="text-muted mb-0">{item.description}</p>
-                </div>
+              <motion.div {...fadeUpProps} transition={{ ...fadeUpProps.transition, delay: index * 0.1 }} whileHover={{ y: -10, scale: 1.01 }}>
+                <NavLink to="/contact#contact-form" className="services-portfolio-link">
+                  <div className="card h-100 shadow-sm border-0 overflow-hidden services-portfolio-card">
+                    <img src={item.image} className="card-img-top services-portfolio-image" alt={item.title} loading="lazy" />
+                    <div className="card-body p-4">
+                      <div className="services-card-label mb-3">{servicesContent.portfolioBadge}</div>
+                      <h5>{item.title}</h5>
+                      <p className="text-muted mb-3">{item.description}</p>
+                      <span className="services-portfolio-cta">{servicesContent.portfolioCta}</span>
+                    </div>
+                  </div>
+                </NavLink>
               </motion.div>
             </div>
           ))}
@@ -115,7 +121,7 @@ export default function ServicesPage() {
       <motion.section className="py-4 interactive-section services-ecosystem-section" {...fadeUpProps}>
         <div className="row g-4 align-items-start">
           <div className="col-lg-5">
-            <div className="section-eyebrow mb-3">Where we work</div>
+            <div className="section-eyebrow mb-3">{servicesContent.ecosystemEyebrow}</div>
             <h2 className="mb-3">{servicesContent.industryTitle}</h2>
             <p className="text-muted mb-0 services-ecosystem-copy">{servicesContent.industryDescription}</p>
           </div>
