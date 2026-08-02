@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import siteContent from '../content/siteContent.json';
 import { fadeUpProps } from '../utils/motion';
+import { hasSuspiciousInput, sanitizeInput } from '../utils/inputSecurity';
+import { validatePhoneNumber } from '../utils/phoneValidation';
+import CountryCodeSelect from './CountryCodeSelect';
+
+const { careers } = siteContent;
 
 export default function JobApplicationForm({ positions = [], selectedPosition = '', onPositionChange }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('US');
   const [email, setEmail] = useState('');
   const [position, setPosition] = useState(selectedPosition || positions[0] || '');
   const [resumeFile, setResumeFile] = useState(null);
   const [whyHire, setWhyHire] = useState('');
   const [status, setStatus] = useState('');
+  const [statusType, setStatusType] = useState('success');
 
   useEffect(() => {
     if (selectedPosition) {
@@ -18,34 +26,88 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
     }
   }, [selectedPosition]);
 
+  useEffect(() => {
+    if (!status) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setStatus('');
+    }, 3000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [status]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedEmail = email.trim();
+    const trimmedWhyHire = whyHire.trim();
+
+    if (!trimmedFirstName || !trimmedLastName || !trimmedPhone || !trimmedEmail || !trimmedWhyHire || !position || !resumeFile) {
+      setStatusType('error');
+      setStatus(careers.form.messages.required);
+      return;
+    }
+
+    if (
+      hasSuspiciousInput(trimmedFirstName) ||
+      hasSuspiciousInput(trimmedLastName) ||
+      hasSuspiciousInput(trimmedPhone) ||
+      hasSuspiciousInput(trimmedEmail) ||
+      hasSuspiciousInput(trimmedWhyHire)
+    ) {
+      setStatusType('error');
+      setStatus(careers.form.messages.unsafe);
+      return;
+    }
+
+    const phoneError = validatePhoneNumber(trimmedPhone, countryCode);
+    if (phoneError) {
+      setStatusType('error');
+      setStatus(phoneError);
+      return;
+    }
+
     const formData = new FormData();
     formData.append('position', position);
-    formData.append('first_name', firstName);
-    formData.append('last_name', lastName);
-    formData.append('phone', phone);
-    formData.append('email', email);
-    formData.append('why_hire', whyHire);
+    formData.append('first_name', sanitizeInput(trimmedFirstName, 80));
+    formData.append('last_name', sanitizeInput(trimmedLastName, 80));
+    formData.append('phone', sanitizeInput(trimmedPhone, 40));
+    formData.append('email', sanitizeInput(trimmedEmail, 140));
+    formData.append('why_hire', sanitizeInput(trimmedWhyHire, 2000));
     if (resumeFile) {
       formData.append('resume', resumeFile);
     }
 
-    const res = await fetch('/api/apply', {
-      method: 'POST',
-      body: formData
-    });
+    try {
+      const res = await fetch('/api/apply', {
+        method: 'POST',
+        body: formData
+      });
 
-    const data = await res.json();
-    setStatus(data.message);
-    setFirstName('');
-    setLastName('');
-    setPhone('');
-    setEmail('');
-    setPosition(selectedPosition || positions[0] || '');
-    setResumeFile(null);
-    setWhyHire('');
-    e.target.reset();
+      const data = await res.json();
+      setStatusType(res.ok ? 'success' : 'error');
+      setStatus(data.message || careers.form.messages.requestFailed);
+
+      if (res.ok) {
+        setFirstName('');
+        setLastName('');
+        setPhone('');
+        setCountryCode('US');
+        setEmail('');
+        setPosition(selectedPosition || positions[0] || '');
+        setResumeFile(null);
+        setWhyHire('');
+        e.target.reset();
+      }
+    } catch {
+      setStatusType('error');
+      setStatus(careers.form.messages.network);
+    }
   };
 
   const handlePositionChange = (value) => {
@@ -57,8 +119,13 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
 
   return (
     <motion.form onSubmit={handleSubmit} className="row g-3 application-form" {...fadeUpProps}>
+      {status && (
+        <div className={`form-toast form-toast-${statusType === 'error' ? 'error' : 'success'}`} role="status" aria-live="polite">
+          {status}
+        </div>
+      )}
       <div className="col-12">
-        <label className="form-label">Position you are applying for</label>
+        <label className="form-label">{careers.form.positionLabel} <span className="text-danger">*</span></label>
         <select
           value={position}
           onChange={(e) => handlePositionChange(e.target.value)}
@@ -71,34 +138,36 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
         </select>
       </div>
       <div className="col-md-6">
-        <label className="form-label">First Name</label>
-        <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="form-control application-form-control" placeholder="First name" required />
+        <label className="form-label">{careers.form.firstNameLabel} <span className="text-danger">*</span></label>
+        <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="form-control application-form-control" placeholder={careers.form.firstNamePlaceholder} required />
       </div>
       <div className="col-md-6">
-        <label className="form-label">Last Name</label>
-        <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="form-control application-form-control" placeholder="Last name" required />
+        <label className="form-label">{careers.form.lastNameLabel} <span className="text-danger">*</span></label>
+        <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="form-control application-form-control" placeholder={careers.form.lastNamePlaceholder} required />
       </div>
       <div className="col-md-6">
-        <label className="form-label">Phone Number</label>
-        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="form-control application-form-control" placeholder="Phone number" required />
+        <label className="form-label">{careers.form.phoneLabel} <span className="text-danger">*</span></label>
+        <div className="d-flex gap-2">
+          <CountryCodeSelect value={countryCode} onChange={setCountryCode} />
+          <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))} className="form-control application-form-control" placeholder={careers.form.phonePlaceholder} required />
+        </div>
       </div>
       <div className="col-md-6">
-        <label className="form-label">Email</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control application-form-control" placeholder="you@example.com" required />
+        <label className="form-label">{careers.form.emailLabel} <span className="text-danger">*</span></label>
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control application-form-control" placeholder={careers.form.emailPlaceholder} required />
       </div>
       <div className="col-12">
-        <label className="form-label">Resume</label>
+        <label className="form-label">{careers.form.resumeLabel} <span className="text-danger">*</span></label>
         <input type="file" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => setResumeFile(e.target.files?.[0] || null)} className="form-control application-form-control" required />
       </div>
       <div className="col-12">
-        <label className="form-label">Why should we hire you?</label>
-        <textarea value={whyHire} onChange={(e) => setWhyHire(e.target.value)} className="form-control application-form-control" placeholder="Tell us what makes you a great fit" rows={5} required />
+        <label className="form-label">{careers.form.whyHireLabel} <span className="text-danger">*</span></label>
+        <textarea value={whyHire} onChange={(e) => setWhyHire(e.target.value)} className="form-control application-form-control" placeholder={careers.form.whyHirePlaceholder} rows={5} required />
       </div>
       <div className="col-12">
         <motion.button type="submit" className="btn btn-success btn-lg job-submit-btn" whileHover={{ y: -2, scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-          Submit application
+          {careers.form.submitButton}
         </motion.button>
-        {status && <p className="text-success mt-3">{status}</p>}
       </div>
     </motion.form>
   );

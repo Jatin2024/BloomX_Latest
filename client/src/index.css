@@ -47,6 +47,22 @@ form label {
   font-weight: 600;
 }
 
+.form-select option {
+  padding: 0.4rem 0.6rem;
+}
+
+.form-select {
+  max-height: 2.8rem;
+}
+
+.form-select:focus {
+  box-shadow: none;
+}
+
+select.form-select {
+  appearance: auto;
+}
+
 footer {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -78,11 +94,35 @@ footer {
   padding-top: 0.5rem;
 }
 
+.footer-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+}
+
 .footer-title {
   color: var(--color-4);
   font-size: clamp(1.3rem, 1.8vw, 1.8rem);
   line-height: 1.18;
   max-width: 16ch;
+}
+
+.footer-brand-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
+.footer-brand-logo {
+  width: 4.1rem;
+  height: 4.1rem;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .footer-description,
@@ -198,17 +238,12 @@ footer {
 }
 
 .site-brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.05rem;
-  height: 2.05rem;
-  border-radius: 0.75rem;
-  background: linear-gradient(145deg, rgba(63, 114, 175, 0.96), rgba(17, 45, 78, 0.98));
-  color: white;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  width: 2.9rem;
+  height: 2.9rem;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .site-brand-text {
@@ -386,6 +421,24 @@ footer {
 
 .services-portfolio-card {
   overflow: hidden;
+}
+
+.services-portfolio-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.services-portfolio-cta {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  color: var(--color-3);
+  font-size: 0.9rem;
+}
+
+.services-portfolio-link:hover .services-portfolio-cta {
+  text-decoration: underline;
 }
 
 .services-portfolio-image {
@@ -618,6 +671,10 @@ footer {
   box-shadow: 0 20px 48px rgba(var(--color-4-rgb), 0.1);
 }
 
+#contact-form {
+  scroll-margin-top: 120px;
+}
+
 .contact-highlights {
   padding-left: 1.1rem;
   color: rgba(var(--color-4-rgb), 0.82);
@@ -649,6 +706,45 @@ footer {
   padding-top: 0.9rem;
   padding-bottom: 0.9rem;
   font-weight: 700;
+}
+
+.form-toast {
+  position: fixed;
+  top: calc(2.75rem);
+  right: 1.25rem;
+  z-index: 1100;
+  max-width: min(92vw, 420px);
+  padding: 0.8rem 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid transparent;
+  box-shadow: 0 16px 36px rgba(var(--color-4-rgb), 0.16);
+  font-weight: 600;
+  line-height: 1.4;
+  animation: toast-slide-in 220ms ease-out;
+}
+
+.form-toast-success {
+  background: rgba(235, 250, 240, 0.97);
+  border-color: rgba(33, 136, 56, 0.28);
+  color: #155724;
+}
+
+.form-toast-error {
+  background: rgba(255, 238, 241, 0.97);
+  border-color: rgba(220, 53, 69, 0.35);
+  color: #7a1220;
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 767.98px) {

@@ -16,7 +16,7 @@ export default function CareersPage() {
       <motion.section className="py-4 interactive-section careers-hero-section" {...fadeUpProps}>
         <div className="row g-4 align-items-center">
           <div className="col-lg-7">
-            <div className="section-eyebrow mb-3">Join us</div>
+            <div className="section-eyebrow mb-3">{careers.heroEyebrow}</div>
             <PageHeader title={careers.pageTitle} subtitle={careers.subtitle} />
           </div>
           <div className="col-lg-5">
@@ -27,16 +27,16 @@ export default function CareersPage() {
               viewport={{ once: false, amount: 0.2 }}
               transition={{ duration: 0.55, ease: 'easeOut' }}
             >
-              <div className="careers-spotlight-tag">Team BloomX</div>
-              <h3>Build products that matter with a team that values clarity, ownership, and craft.</h3>
-              <p className="mb-0">Explore open roles below and apply for the position that matches your strengths.</p>
+              <div className="careers-spotlight-tag">{careers.spotlightTag}</div>
+              <h3>{careers.spotlightTitle}</h3>
+              <p className="mb-0">{careers.spotlightDescription}</p>
             </motion.div>
           </div>
         </div>
       </motion.section>
 
       <section className="py-4">
-        <div className="section-eyebrow mb-3">Open positions</div>
+        <div className="section-eyebrow mb-3">{careers.rolesEyebrow}</div>
         <div className="row g-4">
           {jobOpenings.map((job, index) => (
             <div className="col-md-6 col-lg-4" key={job.title}>
@@ -44,7 +44,7 @@ export default function CareersPage() {
                 <div className="card-body p-4">
                   <div className="careers-role-top mb-3">
                     <span className="careers-role-index">0{index + 1}</span>
-                    <span className="careers-role-label">Open role</span>
+                    <span className="careers-role-label">{careers.roleLabel}</span>
                   </div>
                   <h5>{job.title}</h5>
                   <p className="text-muted mb-4">{job.description}</p>
@@ -53,7 +53,7 @@ export default function CareersPage() {
                     className="btn btn-outline-success careers-apply-btn"
                     onClick={() => setSelectedPosition(job.title)}
                   >
-                    Apply for this role
+                    {careers.roleCta}
                   </a>
                 </div>
               </motion.div>
@@ -66,7 +66,7 @@ export default function CareersPage() {
         <div className="row g-4 align-items-center">
           <div className="col-lg-5">
             <div className="careers-apply-intro rounded-4 p-4 p-lg-5 shadow-sm h-100">
-              <div className="section-eyebrow mb-3">Application</div>
+              <div className="section-eyebrow mb-3">{careers.applicationEyebrow}</div>
               <h2>{careers.applyTitle}</h2>
               <p className="text-muted mb-3">{careers.applyDescription}</p>
               <p className="text-muted careers-company-copy mb-4">{careers.companyIntro}</p>

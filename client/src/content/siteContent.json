@@ -1,4 +1,14 @@
 {
+  "theme": {
+    "palette": {
+      "background": "#F9F7F7",
+      "surface": "#DBE2EF",
+      "primary": "#3F72AF",
+      "text": "#112D4E",
+      "primaryRgb": "63, 114, 175",
+      "textRgb": "17, 45, 78"
+    }
+  },
   "hero": {
     "eyebrow": "Technology • Design • Cloud • Growth",
     "headline": "Building Digital Experiences That Drive Business Growth",
@@ -8,6 +18,16 @@
     "captionBadge": "Design + Growth",
     "captionText": "Strategic digital experiences built for growth, reliability, and long-term value.",
     "backendStatusPrefix": "Backend status:"
+  },
+  "header": {
+    "brandAlt": "BloomX logo",
+    "toggleLabel": "Toggle navigation",
+    "nav": {
+      "home": "Home",
+      "services": "Services",
+      "careers": "Join Us",
+      "contact": "Contact"
+    }
   },
   "home": {
     "whoTitle": "More than a digital agency",
@@ -80,6 +100,10 @@
       "Reliable cloud infrastructure",
       "Continuous support"
     ],
+    "backendStatus": {
+      "checking": "Checking backend connectivity...",
+      "unreachable": "Backend not reachable"
+    },
     "ctaTitle": "Ready to move from concept to launch?",
     "ctaDescription": "Let’s discuss your project, define the right solution, and deliver a digital experience built to grow.",
     "ctaPrimary": "Book a Free Consultation",
@@ -87,6 +111,16 @@
   },
   "services": {
     "pageTitle": "What we deliver",
+    "eyebrow": "Services",
+    "heroMetric": "End-to-end delivery",
+    "heroTitle": "From strategy to launch, every service is built to feel cohesive, premium, and outcome-focused.",
+    "heroDescription": "We combine product thinking, design systems, and engineering execution so each engagement feels like one joined-up solution rather than disconnected tasks.",
+    "deliveryEyebrow": "How we deliver",
+    "deliveryTitle": "A service model designed to stay clear from idea to launch",
+    "portfolioTitle": "Portfolio highlights",
+    "portfolioBadge": "Featured Project",
+    "portfolioCta": "Discuss this project",
+    "ecosystemEyebrow": "Where we work",
     "strategyDescription": "Digital strategy and product planning that align your offering with customer needs and business goals.",
     "designDescription": "Modern, polished interfaces built to increase trust, engagement, and conversion.",
     "deliveryDescription": "Reliable delivery, launch support, and deployment processes that keep your project on schedule.",
@@ -97,6 +131,14 @@
   "careers": {
     "pageTitle": "Open career opportunities",
     "subtitle": "Join BloomX and help build modern digital products, platforms, and cloud solutions for ambitious teams.",
+    "heroEyebrow": "Join us",
+    "spotlightTag": "Team BloomX",
+    "spotlightTitle": "Build products that matter with a team that values clarity, ownership, and craft.",
+    "spotlightDescription": "Explore open roles below and apply for the position that matches your strengths.",
+    "rolesEyebrow": "Open positions",
+    "roleLabel": "Open role",
+    "roleCta": "Apply for this role",
+    "applicationEyebrow": "Application",
     "applyTitle": "Apply to join our team",
     "applyDescription": "Tell us about your experience, attach your resume, and show why you'd be a great addition to BloomX.",
     "companyIntro": "At BloomX, we work with fast-moving teams to design and build digital products that solve real business problems.",
@@ -110,31 +152,92 @@
       "Remote-first collaboration",
       "Product-focused projects",
       "Learning-driven culture"
-    ]
+    ],
+    "form": {
+      "positionLabel": "Position you are applying for",
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name",
+      "phoneLabel": "Phone Number",
+      "emailLabel": "Email",
+      "resumeLabel": "Resume",
+      "whyHireLabel": "Why should we hire you?",
+      "firstNamePlaceholder": "First name",
+      "lastNamePlaceholder": "Last name",
+      "phonePlaceholder": "Phone number",
+      "emailPlaceholder": "you@example.com",
+      "whyHirePlaceholder": "Tell us what makes you a great fit",
+      "submitButton": "Submit application",
+      "messages": {
+        "required": "All required fields must be completed, including your resume.",
+        "unsafe": "Please remove scripts or unsafe markup from your inputs.",
+        "network": "Network error. Please try again.",
+        "requestFailed": "Request failed. Please try again."
+      }
+    }
   },
   "contact": {
     "pageTitle": "Send an enquiry",
+    "pageEyebrow": "Contact",
     "introTitle": "Tell us about your project",
     "introDescription": "Need a website, product, or cloud solution? Share your goals and what you want your digital experience to achieve.",
-    "highlightTitle": "What happens next",
+    "heroBadge": "Let’s build together",
+    "briefingEyebrow": "Understand our process",
+    "highlightTitle": "Contact us to understand our work and how we deliver",
     "highlightPoints": [
-      "We review your enquiry and align on your goals.",
-      "You get a clear plan with scope, timeline, and delivery approach.",
-      "Our team starts execution with transparent updates from day one."
+      "We walk you through similar projects and how they were delivered.",
+      "You get clarity on our discovery, design, and development workflow.",
+      "We align scope, timeline, and delivery model before execution starts."
     ],
-    "chips": ["Fast response", "Clear roadmap", "Product-first delivery"],
+    "chips": ["How we work", "Delivery clarity", "Project fit"],
     "directEmail": "hello@bloomx.com",
-    "responseTime": "Typical response within 24 hours"
+    "responseTime": "Typical response within 24 hours",
+    "form": {
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name",
+      "phoneLabel": "Phone Number",
+      "emailLabel": "Email",
+      "messageLabel": "Message",
+      "firstNamePlaceholder": "First name",
+      "lastNamePlaceholder": "Last name",
+      "phonePlaceholder": "Phone number",
+      "emailPlaceholder": "you@example.com",
+      "messagePlaceholder": "Tell us about your project",
+      "submitButton": "Send enquiry",
+      "messages": {
+        "required": "All fields are required.",
+        "unsafe": "Please remove scripts or unsafe markup from your message.",
+        "network": "Network error. Please try again.",
+        "requestFailed": "Request failed. Please try again."
+      }
+    }
+  },
+  "forms": {
+    "countrySelect": {
+      "searchPlaceholder": "Search country"
+    }
   },
   "footer": {
     "headline": "BloomX",
     "tagline": "Technology and digital product solutions for modern businesses.",
+    "headings": {
+      "services": "Services",
+      "contact": "Contact"
+    },
+    "labels": {
+      "email": "Email",
+      "phone": "Phone",
+      "location": "Location"
+    },
+    "links": {
+      "services": "Services",
+      "contact": "Contact"
+    },
     "description": "We help ambitious teams launch polished products, scale digital operations, and keep their systems reliable as they grow.",
     "highlights": ["Product strategy", "Digital experiences", "Cloud engineering"],
     "services": ["Digital experiences", "Custom platforms", "Cloud solutions", "API & integrations"],
     "contact": {
       "email": "hello@bloomx.com",
-      "phone": "+1 (555) 012-3456",
+      "phone": "+91 72062 74898",
       "location": "Remote-first, serving clients worldwide"
     },
     "note": "Built for teams that want a clear process and measurable outcomes.",
