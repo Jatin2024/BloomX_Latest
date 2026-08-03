@@ -20,6 +20,7 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
   const [whyHire, setWhyHire] = useState('');
   const [status, setStatus] = useState('');
   const [statusType, setStatusType] = useState('success');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (selectedPosition) {
@@ -41,6 +42,10 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
 
     const trimmedFirstName = firstName.trim();
     const trimmedLastName = lastName.trim();
@@ -84,6 +89,8 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
       formData.append('resume', resumeFile);
     }
 
+    setIsSubmitting(true);
+
     try {
       const res = await fetch(buildApiUrl('/apply'), {
         method: 'POST',
@@ -108,6 +115,8 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
     } catch {
       setStatusType('error');
       setStatus(careers.form.messages.network);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -166,8 +175,22 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
         <textarea value={whyHire} onChange={(e) => setWhyHire(e.target.value)} className="form-control application-form-control" placeholder={careers.form.whyHirePlaceholder} rows={5} required />
       </div>
       <div className="col-12">
-        <motion.button type="submit" className="btn btn-success btn-lg job-submit-btn" whileHover={{ y: -2, scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-          {careers.form.submitButton}
+        <motion.button
+          type="submit"
+          className="btn btn-success btn-lg job-submit-btn"
+          whileHover={isSubmitting ? undefined : { y: -2, scale: 1.01 }}
+          whileTap={isSubmitting ? undefined : { scale: 0.99 }}
+          disabled={isSubmitting}
+          aria-busy={isSubmitting}
+        >
+          {isSubmitting ? (
+            <span className="d-inline-flex align-items-center gap-2">
+              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+              {careers.form.messages.submitting || 'Submitting...'}
+            </span>
+          ) : (
+            careers.form.submitButton
+          )}
         </motion.button>
       </div>
     </motion.form>

@@ -710,7 +710,7 @@ footer {
 
 .form-toast {
   position: fixed;
-  top: calc(2.75rem);
+  top: 3.75rem;
   right: 1.25rem;
   z-index: 1100;
   max-width: min(92vw, 420px);
