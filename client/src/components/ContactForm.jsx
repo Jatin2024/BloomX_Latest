@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import siteContent from '../content/siteContent.json';
 import { fadeUpProps } from '../utils/motion';
+import { buildApiUrl } from '../utils/api';
 import { hasSuspiciousInput, sanitizeInput } from '../utils/inputSecurity';
 import { validatePhoneNumber } from '../utils/phoneValidation';
 import CountryCodeSelect from './CountryCodeSelect';
@@ -73,7 +74,7 @@ export default function ContactForm() {
     };
 
     try {
-      const res = await fetch('/api/enquiry', {
+      const res = await fetch(buildApiUrl('/enquiry'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

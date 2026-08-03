@@ -24,6 +24,10 @@ const DEFAULT_PORT = Number(process.env.PORT) || 5001;
 const RAW_MONGO_URI = process.env.MONGO_URI || '';
 const MONGO_URI = RAW_MONGO_URI.includes('<db_username>') ? '' : RAW_MONGO_URI;
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || '';
+const CORS_ALLOWED_ORIGINS = String(process.env.CORS_ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 const DOWNLOAD_LINK_TTL_MS = 15 * 60 * 1000;
 const ALLOWED_RESUME_MIME = new Set([
   'application/pdf',
@@ -37,7 +41,29 @@ if (RAW_MONGO_URI && !MONGO_URI) {
   console.warn('MONGO_URI includes placeholder values. Replace them with real credentials.');
 }
 
-app.use(cors());
+const corsOptions = CORS_ALLOWED_ORIGINS.length
+  ? {
+      origin: (origin, callback) => {
+        // Allow non-browser clients and same-origin server-side requests.
+        if (!origin) {
+          return callback(null, true);
+        }
+
+        if (CORS_ALLOWED_ORIGINS.includes(origin)) {
+          return callback(null, true);
+        }
+
+        console.warn(`Blocked CORS origin: ${origin}`);
+        return callback(null, false);
+      }
+    }
+  : { origin: true };
+
+if (CORS_ALLOWED_ORIGINS.length) {
+  console.log(`CORS allowlist enabled for origins: ${CORS_ALLOWED_ORIGINS.join(', ')}`);
+}
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api', (req, res, next) => {

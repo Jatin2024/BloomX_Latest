@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import siteContent from '../content/siteContent.json';
+import { buildApiUrl } from '../utils/api';
 import { fadeUpProps } from '../utils/motion';
 import { hasSuspiciousInput, sanitizeInput } from '../utils/inputSecurity';
 import { validatePhoneNumber } from '../utils/phoneValidation';
@@ -84,7 +85,7 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
     }
 
     try {
-      const res = await fetch('/api/apply', {
+      const res = await fetch(buildApiUrl('/apply'), {
         method: 'POST',
         body: formData
       });
