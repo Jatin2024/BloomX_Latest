@@ -18,6 +18,7 @@ export default function ContactForm() {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('');
   const [statusType, setStatusType] = useState('success');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!status) {
@@ -33,6 +34,10 @@ export default function ContactForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
 
     const trimmedFirstName = firstName.trim();
     const trimmedLastName = lastName.trim();
@@ -73,6 +78,8 @@ export default function ContactForm() {
       message: sanitizeInput(trimmedMessage, 2000)
     };
 
+    setIsSubmitting(true);
+
     try {
       const res = await fetch(buildApiUrl('/enquiry'), {
         method: 'POST',
@@ -95,6 +102,8 @@ export default function ContactForm() {
     } catch {
       setStatusType('error');
       setStatus(contact.form.messages.network);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -129,8 +138,22 @@ export default function ContactForm() {
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="form-control application-form-control contact-form-control" placeholder={contact.form.messagePlaceholder} rows={5} required />
       </div>
       <div className="col-12">
-        <motion.button type="submit" className="btn btn-success btn-lg contact-submit-btn" whileHover={{ y: -2, scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-          {contact.form.submitButton}
+        <motion.button
+          type="submit"
+          className="btn btn-success btn-lg contact-submit-btn"
+          whileHover={isSubmitting ? undefined : { y: -2, scale: 1.01 }}
+          whileTap={isSubmitting ? undefined : { scale: 0.99 }}
+          disabled={isSubmitting}
+          aria-busy={isSubmitting}
+        >
+          {isSubmitting ? (
+            <span className="d-inline-flex align-items-center gap-2">
+              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+              {contact.form.messages.submitting || 'Sending...'}
+            </span>
+          ) : (
+            contact.form.submitButton
+          )}
         </motion.button>
       </div>
     </motion.form>

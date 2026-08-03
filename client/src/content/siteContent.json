@@ -171,7 +171,8 @@
         "required": "All required fields must be completed, including your resume.",
         "unsafe": "Please remove scripts or unsafe markup from your inputs.",
         "network": "Network error. Please try again.",
-        "requestFailed": "Request failed. Please try again."
+        "requestFailed": "Request failed. Please try again.",
+        "submitting": "Submitting..."
       }
     }
   },
@@ -207,7 +208,8 @@
         "required": "All fields are required.",
         "unsafe": "Please remove scripts or unsafe markup from your message.",
         "network": "Network error. Please try again.",
-        "requestFailed": "Request failed. Please try again."
+        "requestFailed": "Request failed. Please try again.",
+        "submitting": "Sending..."
       }
     }
   },
