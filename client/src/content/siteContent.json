@@ -1,4 +1,10 @@
 {
+  "site": {
+    "name": "BloomX Technologies",
+    "shortName": "BloomX",
+    "tagline": "Innovate · Build · Grow",
+    "defaultDescription": "BloomX Technologies designs and builds responsive websites, custom React applications, APIs and cloud deployments — then maintains them so your business has a dependable foundation online."
+  },
   "theme": {
     "palette": {
       "background": "#F9F7F7",
@@ -9,220 +15,278 @@
       "textRgb": "17, 45, 78"
     }
   },
-  "hero": {
-    "eyebrow": "Technology • Design • Cloud • Growth",
-    "headline": "Building Digital Experiences That Drive Business Growth",
-    "description": "BloomX partners with ambitious teams to craft premium digital products, scalable business platforms, and cloud-powered systems. We blend modern design with robust engineering to build solutions that strengthen brands, improve operations, and deliver lasting customer value.",
-    "primaryButton": "Start Your Project",
-    "secondaryButton": "View Our Work",
-    "captionBadge": "Design + Growth",
-    "captionText": "Strategic digital experiences built for growth, reliability, and long-term value.",
-    "backendStatusPrefix": "Backend status:"
-  },
   "header": {
-    "brandAlt": "BloomX logo",
-    "toggleLabel": "Toggle navigation",
-    "nav": {
-      "home": "Home",
-      "services": "Services",
-      "careers": "Join Us",
-      "contact": "Contact"
-    }
+    "brandAlt": "BloomX Technologies logo",
+    "openLabel": "Open navigation menu",
+    "closeLabel": "Close navigation menu",
+    "cta": "Start a Project",
+    "skipLink": "Skip to main content",
+    "nav": [
+      {
+        "label": "Home",
+        "to": "/"
+      },
+      {
+        "label": "Services",
+        "to": "/services"
+      },
+      {
+        "label": "Work",
+        "to": "/work"
+      },
+      {
+        "label": "Careers",
+        "to": "/careers"
+      },
+      {
+        "label": "Contact",
+        "to": "/contact"
+      }
+    ]
   },
   "home": {
-    "whoTitle": "More than a digital agency",
-    "whoDescription": "BloomX is a technology and digital solutions partner that helps ambitious teams launch scalable products, modernize systems, and make every customer interaction feel premium.",
-    "whoParagraphs": [
-      "We begin by aligning every solution with your business goals, audience, and product roadmap.",
-      "Our team designs and engineers polished platforms, portals, and cloud systems that grow with your organization.",
-      "We make your digital products faster, more dependable, and easier to manage so you can focus on growth."
-    ],
-    "whoBadges": ["Business-first solutions", "Modern digital strategy"],
-    "whoFeatures": [
-      {"label": "Platform design", "icon": "⚙️", "title": "Scalable products", "description": "Modern applications and digital platforms built to support growing teams and demand."},
-      {"label": "Cloud systems", "icon": "☁️", "title": "Cloud-ready systems", "description": "Infrastructure and deployments designed for reliability, performance, and future growth."},
-      {"label": "Experience", "icon": "🎨", "title": "User-first design", "description": "Interfaces that feel intuitive, polished, and aligned to your brand."},
-      {"label": "Connected systems", "icon": "🔗", "title": "Integration-ready", "description": "APIs, automation, and workflows that connect your business systems seamlessly."}
-    ],
-    "serviceTitle": "Products we build",
-    "serviceDescription": "We deliver digital products that are designed to perform and built to scale.",
-    "serviceCards": [
-      {
-        "label": "Customer touchpoints",
-        "icon": "✨",
-        "title": "Digital experiences",
-        "description": "Brand websites, landing pages, and customer-facing interfaces designed to build trust and capture attention."
-      },
-      {
-        "label": "Business systems",
-        "icon": "🧩",
-        "title": "Custom platforms",
-        "description": "Web portals, SaaS tools, and business systems built to support your processes and your growth." 
-      },
-      {
-        "label": "Infrastructure",
-        "icon": "☁️",
-        "title": "Cloud solutions",
-        "description": "Managed deployments, infrastructure, and monitoring on AWS, Azure, or GCP for reliable scale." 
-      },
-      {
-        "label": "Automation",
-        "icon": "🔗",
-        "title": "API & integrations",
-        "description": "Connected systems and automation that streamline operations and improve team efficiency." 
-      }
-    ],
-    "whyTitle": "Why companies choose BloomX",
-    "whyDescription": "We deliver dependable digital solutions through clear communication, modern technology, and a business-focused approach.",
-    "whyBullets": [
-      {
-        "title": "Product thinking over project thinking",
-        "description": "We treat every engagement like a product roadmap, so the work is guided by business outcomes instead of one-off deliverables."
-      },
-      {
-        "title": "Performance, security, and scale",
-        "description": "We design and engineer with reliability in mind, building systems that stay fast, secure, and ready to grow."
-      },
-      {
-        "title": "Transparent timelines and handoffs",
-        "description": "You get clear milestones, thoughtful communication, and a delivery process that stays easy to follow."
-      },
-      {
-        "title": "Proactive support after launch",
-        "description": "We stay involved after release so your product keeps improving as your business evolves."
-      }
-    ],
-    "trustPrinciples": [
-      "Business-first thinking",
-      "Proven technical expertise",
-      "Transparent delivery",
-      "Modern design systems",
-      "Reliable cloud infrastructure",
-      "Continuous support"
-    ],
-    "backendStatus": {
-      "checking": "Checking backend connectivity...",
-      "unreachable": "Backend not reachable"
+    "meta": {
+      "title": "BloomX Technologies | Websites, Web Apps & APIs Built to Last",
+      "description": "A web development studio building responsive websites, custom React applications, APIs and cloud deployments for businesses that need a dependable foundation online."
     },
-    "ctaTitle": "Ready to move from concept to launch?",
-    "ctaDescription": "Let’s discuss your project, define the right solution, and deliver a digital experience built to grow.",
-    "ctaPrimary": "Book a Free Consultation",
-    "ctaSecondary": "Start a Conversation"
+    "hero": {
+      "eyebrow": "Innovate · Build · Grow",
+      "titleLines": [
+        "Digital",
+        "experiences",
+        "engineered for",
+        "growth."
+      ],
+      "accentLine": 3,
+      "text": "BloomX Technologies designs and builds the websites, web applications and APIs your business runs on — then deploys, monitors and maintains them, so the thing you launched keeps working six months later.",
+      "primaryCta": "Start a Project",
+      "secondaryCta": "Explore Our Services",
+      "chip": "Available for new projects",
+      "figureLabel": "The studio",
+      "figureCaption": "Design and engineering handled by the same small team, start to finish.",
+      "signals": [
+        {
+          "title": "Design and engineering together",
+          "text": "One team owns the interface, the API behind it and the deployment that ships it."
+        },
+        {
+          "title": "React, Node and .NET",
+          "text": "Modern front ends on maintainable foundations, with data and integrations handled properly."
+        },
+        {
+          "title": "Support past launch day",
+          "text": "Fixes, dependency updates and new features continue once the site is live."
+        }
+      ]
+    },
+    "intro": {
+      "eyebrow": "The studio",
+      "title": "A small team that takes a project from first conversation to live infrastructure.",
+      "text": "BloomX Technologies is a web development studio. We work directly with business owners and product teams — no account layer in between — on the websites, internal tools and platforms that their customers and staff use every day.",
+      "figureBadge": "Design + Engineering",
+      "points": [
+        {
+          "title": "We start with the business, not the brief",
+          "text": "Before any design work, we establish what the site or system has to achieve and who it is for. Scope follows from that."
+        },
+        {
+          "title": "You see working software early",
+          "text": "Design and build run in short cycles, so you are reviewing real screens in a browser rather than approving static images."
+        },
+        {
+          "title": "Nothing is handed over half-finished",
+          "text": "Deployment, environment configuration and documentation are part of the job, not an extra conversation at the end."
+        }
+      ]
+    },
+    "services": {
+      "eyebrow": "Capabilities",
+      "title": "What we build",
+      "text": "Six services that cover a project end to end. Most engagements combine two or three of them.",
+      "cta": "View service details"
+    },
+    "work": {
+      "eyebrow": "Selected work",
+      "title": "Platforms we have designed and built",
+      "text": "Described by scope and technology. BloomHR and BloomBookings are BloomX products.",
+      "cta": "See all work"
+    },
+    "approach": {
+      "eyebrow": "How we work",
+      "title": "Five steps, written down before we start.",
+      "text": "The same process runs on a five-page website and a multi-role platform. Only the depth of each stage changes."
+    },
+    "why": {
+      "eyebrow": "Why BloomX",
+      "title": "What you can reasonably expect from working with us.",
+      "text": "No awards, no client logo wall, no invented numbers. Here is what we actually commit to on every project."
+    },
+    "cta": {
+      "eyebrow": "Start a project",
+      "title": "Have an idea? Let’s build something meaningful.",
+      "text": "Tell us about your business, the problem with your current site, or the product you want to put in front of customers. We will reply with honest scope and a realistic timeline.",
+      "primary": "Discuss Your Project",
+      "secondary": "Explore Our Services"
+    }
   },
   "services": {
-    "pageTitle": "What we deliver",
+    "meta": {
+      "title": "Services | BloomX Technologies",
+      "description": "Website design and development, custom React applications, full-stack and API development, cloud deployment and ongoing maintenance."
+    },
     "eyebrow": "Services",
-    "heroMetric": "End-to-end delivery",
-    "heroTitle": "From strategy to launch, every service is built to feel cohesive, premium, and outcome-focused.",
-    "heroDescription": "We combine product thinking, design systems, and engineering execution so each engagement feels like one joined-up solution rather than disconnected tasks.",
-    "deliveryEyebrow": "How we deliver",
-    "deliveryTitle": "A service model designed to stay clear from idea to launch",
-    "portfolioTitle": "Portfolio highlights",
-    "portfolioBadge": "Featured Project",
-    "portfolioCta": "Discuss this project",
-    "ecosystemEyebrow": "Where we work",
-    "strategyDescription": "Digital strategy and product planning that align your offering with customer needs and business goals.",
-    "designDescription": "Modern, polished interfaces built to increase trust, engagement, and conversion.",
-    "deliveryDescription": "Reliable delivery, launch support, and deployment processes that keep your project on schedule.",
-    "industryTitle": "Industries we serve",
-    "industryDescription": "We partner with teams that need modern digital products, clear messaging, and scalable technology solutions.",
-    "technologyTitle": "Technologies we use"
+    "title": "Everything needed to get a digital product built and keep it running.",
+    "text": "Each service below lists what it actually includes and the technologies involved, so you can work out which parts of it you need.",
+    "deliverablesLabel": "What’s included",
+    "stackLabel": "Typically built with",
+    "serviceCta": "Enquire about this service",
+    "processEyebrow": "Delivery",
+    "processTitle": "The same five stages on every engagement",
+    "techEyebrow": "Technology",
+    "techTitle": "What we build with",
+    "techText": "We pick from a deliberately small set of tools we know well, rather than reaching for whatever is new.",
+    "industryEyebrow": "Sectors",
+    "industryTitle": "Industries we have built for",
+    "industryText": "The engineering is similar across sectors; the domain rules are not. These are the areas we have worked in."
+  },
+  "work": {
+    "meta": {
+      "title": "Work | BloomX Technologies",
+      "description": "Selected platforms designed and built by BloomX Technologies — an e-commerce storefront, an HR management system and an appointment management SaaS."
+    },
+    "eyebrow": "Work",
+    "title": "Platforms we have designed and built.",
+    "text": "Each project is described by its scope and the technology behind it. We do not publish client performance figures we cannot evidence.",
+    "note": "BloomHR and BloomBookings are BloomX products built in-house.",
+    "scopeLabel": "Scope",
+    "stackLabel": "Stack",
+    "typeLabel": "Type",
+    "cta": "Discuss a project like this"
   },
   "careers": {
-    "pageTitle": "Open career opportunities",
-    "subtitle": "Join BloomX and help build modern digital products, platforms, and cloud solutions for ambitious teams.",
-    "heroEyebrow": "Join us",
-    "spotlightTag": "Team BloomX",
-    "spotlightTitle": "Build products that matter with a team that values clarity, ownership, and craft.",
-    "spotlightDescription": "Explore open roles below and apply for the position that matches your strengths.",
+    "meta": {
+      "title": "Careers | BloomX Technologies",
+      "description": "Open roles at BloomX Technologies for frontend developers, backend engineers and cloud specialists."
+    },
+    "eyebrow": "Careers",
+    "title": "Build things that go live and stay live.",
+    "text": "We are a small team, which means the work you ship is visible and the decisions are yours to make. If that suits you, apply below.",
     "rolesEyebrow": "Open positions",
-    "roleLabel": "Open role",
-    "roleCta": "Apply for this role",
-    "applicationEyebrow": "Application",
-    "applyTitle": "Apply to join our team",
-    "applyDescription": "Tell us about your experience, attach your resume, and show why you'd be a great addition to BloomX.",
-    "companyIntro": "At BloomX, we work with fast-moving teams to design and build digital products that solve real business problems.",
-    "whyApplyTitle": "Why apply at BloomX",
-    "whyApplyPoints": [
-      "Work on meaningful products across design, engineering, and cloud delivery.",
-      "Collaborate with a team that values ownership, clarity, and modern craft.",
-      "Grow your skills through real client impact and continuous learning."
+    "rolesTitle": "Current openings",
+    "roleCta": "Apply",
+    "applyEyebrow": "Application",
+    "applyTitle": "Apply to join the team",
+    "applyText": "Tell us which role fits, attach your CV, and explain what you would bring. We read every application.",
+    "whyTitle": "What the work looks like",
+    "whyPoints": [
+      "Real ownership of features from design through to deployment.",
+      "A small team, so your decisions reach production quickly.",
+      "Work across client projects and BloomX's own products."
     ],
     "benefits": [
-      "Remote-first collaboration",
-      "Product-focused projects",
-      "Learning-driven culture"
+      "Remote-first",
+      "Product-focused work",
+      "Learning time"
     ],
     "form": {
-      "positionLabel": "Position you are applying for",
-      "firstNameLabel": "First Name",
-      "lastNameLabel": "Last Name",
-      "phoneLabel": "Phone Number",
+      "positionLabel": "Position",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "phoneLabel": "Phone number",
       "emailLabel": "Email",
       "resumeLabel": "Resume",
+      "resumeHint": "PDF, DOC or DOCX, up to 5 MB.",
       "whyHireLabel": "Why should we hire you?",
       "firstNamePlaceholder": "First name",
       "lastNamePlaceholder": "Last name",
       "phonePlaceholder": "Phone number",
       "emailPlaceholder": "you@example.com",
-      "whyHirePlaceholder": "Tell us what makes you a great fit",
+      "whyHirePlaceholder": "What you have built, and what you would bring to the team",
       "submitButton": "Submit application",
       "messages": {
-        "required": "All required fields must be completed, including your resume.",
+        "required": "Please complete every required field, including your resume.",
         "unsafe": "Please remove scripts or unsafe markup from your inputs.",
         "network": "Network error. Please try again.",
         "requestFailed": "Request failed. Please try again.",
-        "submitting": "Submitting..."
+        "submitting": "Submitting…",
+        "firstName": "First name is required.",
+        "lastName": "Last name is required.",
+        "email": "Enter a valid email address.",
+        "resume": "Attach your resume to apply.",
+        "whyHire": "Tell us briefly why you are a good fit.",
+        "position": "Select the role you are applying for."
       }
     }
   },
   "contact": {
-    "pageTitle": "Send an enquiry",
-    "pageEyebrow": "Contact",
-    "introTitle": "Tell us about your project",
-    "introDescription": "Need a website, product, or cloud solution? Share your goals and what you want your digital experience to achieve.",
-    "heroBadge": "Let’s build together",
-    "briefingEyebrow": "Understand our process",
-    "highlightTitle": "Contact us to understand our work and how we deliver",
-    "highlightPoints": [
-      "We walk you through similar projects and how they were delivered.",
-      "You get clarity on our discovery, design, and development workflow.",
-      "We align scope, timeline, and delivery model before execution starts."
+    "meta": {
+      "title": "Contact | BloomX Technologies",
+      "description": "Tell BloomX Technologies about your project. We reply with honest scope and a realistic timeline, usually within one working day."
+    },
+    "eyebrow": "Contact",
+    "title": "Tell us about your project.",
+    "text": "A few sentences about your business and what you need is enough to start. If a call is easier, say so and we will arrange one.",
+    "asideEyebrow": "What happens next",
+    "steps": [
+      "We read your enquiry and reply with questions, or with a straight answer if the scope is clear.",
+      "A short call to confirm goals, constraints and budget range.",
+      "A written scope with stages, timeline and cost before anything is committed."
     ],
-    "chips": ["How we work", "Delivery clarity", "Project fit"],
-    "directEmail": "hello@bloomx.com",
-    "responseTime": "Typical response within 24 hours",
+    "detailsEyebrow": "Direct",
+    "responseLabel": "Response time",
+    "responseTime": "Usually within one working day",
+    "formTitle": "Project enquiry",
+    "formText": "Fields marked with an asterisk are required.",
+    "servicePrefill": "I’m interested in: ",
     "form": {
-      "firstNameLabel": "First Name",
-      "lastNameLabel": "Last Name",
-      "phoneLabel": "Phone Number",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "phoneLabel": "Phone number",
       "emailLabel": "Email",
-      "messageLabel": "Message",
+      "messageLabel": "Your project",
       "firstNamePlaceholder": "First name",
       "lastNamePlaceholder": "Last name",
       "phonePlaceholder": "Phone number",
       "emailPlaceholder": "you@example.com",
-      "messagePlaceholder": "Tell us about your project",
+      "messagePlaceholder": "What does your business do, and what do you need built?",
       "submitButton": "Send enquiry",
       "messages": {
-        "required": "All fields are required.",
+        "required": "Please complete every required field.",
         "unsafe": "Please remove scripts or unsafe markup from your message.",
         "network": "Network error. Please try again.",
         "requestFailed": "Request failed. Please try again.",
-        "submitting": "Sending..."
+        "submitting": "Sending…",
+        "firstName": "First name is required.",
+        "lastName": "Last name is required.",
+        "email": "Enter a valid email address.",
+        "message": "Please tell us a little about the project."
       }
     }
   },
+  "notFound": {
+    "meta": {
+      "title": "Page not found | BloomX Technologies",
+      "description": "The page you were looking for does not exist."
+    },
+    "code": "404",
+    "title": "That page doesn’t exist.",
+    "text": "The link may be out of date. Everything else is still where you left it.",
+    "primary": "Back to home",
+    "secondary": "Contact us"
+  },
   "forms": {
     "countrySelect": {
-      "searchPlaceholder": "Search country"
-    }
+      "label": "Country dialling code",
+      "searchPlaceholder": "Search country",
+      "empty": "No countries match that search"
+    },
+    "required": "required"
   },
   "footer": {
-    "headline": "BloomX",
-    "tagline": "Technology and digital product solutions for modern businesses.",
+    "statement": "A web development studio building websites, applications and APIs for businesses that need them to keep working.",
     "headings": {
       "services": "Services",
+      "site": "Site",
       "contact": "Contact"
     },
     "labels": {
@@ -230,19 +294,29 @@
       "phone": "Phone",
       "location": "Location"
     },
-    "links": {
-      "services": "Services",
-      "contact": "Contact"
-    },
-    "description": "We help ambitious teams launch polished products, scale digital operations, and keep their systems reliable as they grow.",
-    "highlights": ["Product strategy", "Digital experiences", "Cloud engineering"],
-    "services": ["Digital experiences", "Custom platforms", "Cloud solutions", "API & integrations"],
     "contact": {
       "email": "hello@bloomx.com",
       "phone": "+91 72062 74898",
       "location": "Remote-first, serving clients worldwide"
     },
-    "note": "Built for teams that want a clear process and measurable outcomes.",
-    "copy": "© 2026 BloomX. Technology and digital product solutions for modern businesses."
+    "copy": "© 2026 BloomX Technologies. All rights reserved.",
+    "bottomLinks": [
+      {
+        "label": "Services",
+        "to": "/services"
+      },
+      {
+        "label": "Work",
+        "to": "/work"
+      },
+      {
+        "label": "Careers",
+        "to": "/careers"
+      },
+      {
+        "label": "Contact",
+        "to": "/contact"
+      }
+    ]
   }
 }

@@ -1,161 +1,230 @@
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { m } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import siteContent from '../content/siteContent.json';
 import { fadeUpProps } from '../utils/motion';
 import { buildApiUrl } from '../utils/api';
 import { hasSuspiciousInput, sanitizeInput } from '../utils/inputSecurity';
 import { validatePhoneNumber } from '../utils/phoneValidation';
 import CountryCodeSelect from './CountryCodeSelect';
+import { Button } from './ui/Primitives';
+import { Field, FormToast, emailPattern } from './ui/FormBits';
 
 const { contact } = siteContent;
+const messages = contact.form.messages;
 
-export default function ContactForm() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [countryCode, setCountryCode] = useState('US');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+const EMPTY = {
+  firstName: '',
+  lastName: '',
+  phone: '',
+  email: '',
+  message: ''
+};
+
+/**
+ * Project enquiry form.
+ *
+ * The network contract is unchanged from the original implementation:
+ * POST {API}/enquiry with { first_name, last_name, phone, email, message },
+ * sanitised and length-capped exactly as before. Success is only ever shown
+ * when the response is actually ok.
+ */
+export default function ContactForm({ initialMessage = '' }) {
+  const [values, setValues] = useState({ ...EMPTY, message: initialMessage });
+  const [countryCode, setCountryCode] = useState('IN');
+  const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('');
   const [statusType, setStatusType] = useState('success');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef(null);
+
+  // Prefill from a service deep-link (/contact?service=apis) when provided.
+  useEffect(() => {
+    if (initialMessage) {
+      setValues((current) => (current.message ? current : { ...current, message: initialMessage }));
+    }
+  }, [initialMessage]);
 
   useEffect(() => {
-    if (!status) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setStatus('');
-    }, 3000);
-
+    if (!status) return undefined;
+    const timeoutId = window.setTimeout(() => setStatus(''), 6000);
     return () => window.clearTimeout(timeoutId);
   }, [status]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const setValue = (key) => (event) => {
+    const raw = event.target.value;
+    const next = key === 'phone' ? raw.replace(/\D/g, '') : raw;
+    setValues((current) => ({ ...current, [key]: next }));
+    setErrors((current) => (current[key] ? { ...current, [key]: '' } : current));
+  };
 
-    if (isSubmitting) {
-      return;
-    }
+  const validate = () => {
+    const next = {};
+    const trimmed = Object.fromEntries(
+      Object.entries(values).map(([key, value]) => [key, value.trim()])
+    );
 
-    const trimmedFirstName = firstName.trim();
-    const trimmedLastName = lastName.trim();
-    const trimmedPhone = phone.trim();
-    const trimmedEmail = email.trim();
-    const trimmedMessage = message.trim();
+    if (!trimmed.firstName) next.firstName = messages.firstName;
+    if (!trimmed.lastName) next.lastName = messages.lastName;
+    if (!trimmed.email || !emailPattern.test(trimmed.email)) next.email = messages.email;
+    if (!trimmed.message) next.message = messages.message;
 
-    if (!trimmedFirstName || !trimmedLastName || !trimmedPhone || !trimmedEmail || !trimmedMessage) {
+    const phoneError = validatePhoneNumber(trimmed.phone, countryCode);
+    if (phoneError) next.phone = phoneError;
+
+    const unsafe = Object.values(trimmed).some((value) => hasSuspiciousInput(value));
+    return { next, trimmed, unsafe };
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (isSubmitting) return;
+
+    const { next, trimmed, unsafe } = validate();
+
+    if (unsafe) {
       setStatusType('error');
-      setStatus(contact.form.messages.required);
+      setStatus(messages.unsafe);
       return;
     }
 
-    if (
-      hasSuspiciousInput(trimmedFirstName) ||
-      hasSuspiciousInput(trimmedLastName) ||
-      hasSuspiciousInput(trimmedPhone) ||
-      hasSuspiciousInput(trimmedEmail) ||
-      hasSuspiciousInput(trimmedMessage)
-    ) {
+    if (Object.keys(next).length) {
+      setErrors(next);
       setStatusType('error');
-      setStatus(contact.form.messages.unsafe);
+      setStatus(messages.required);
+      const firstKey = Object.keys(next)[0];
+      formRef.current?.querySelector(`[name="${firstKey}"]`)?.focus();
       return;
     }
 
-    const phoneError = validatePhoneNumber(trimmedPhone, countryCode);
-    if (phoneError) {
-      setStatusType('error');
-      setStatus(phoneError);
-      return;
-    }
-
-    const payload = {
-      first_name: sanitizeInput(trimmedFirstName, 80),
-      last_name: sanitizeInput(trimmedLastName, 80),
-      phone: sanitizeInput(trimmedPhone, 40),
-      email: sanitizeInput(trimmedEmail, 140),
-      message: sanitizeInput(trimmedMessage, 2000)
-    };
-
+    setErrors({});
     setIsSubmitting(true);
 
+    const payload = {
+      first_name: sanitizeInput(trimmed.firstName, 80),
+      last_name: sanitizeInput(trimmed.lastName, 80),
+      phone: sanitizeInput(trimmed.phone, 40),
+      email: sanitizeInput(trimmed.email, 140),
+      message: sanitizeInput(trimmed.message, 2000)
+    };
+
     try {
-      const res = await fetch(buildApiUrl('/enquiry'), {
+      const response = await fetch(buildApiUrl('/enquiry'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
-      setStatusType(res.ok ? 'success' : 'error');
-      setStatus(data.message || contact.form.messages.requestFailed);
+      const data = await response.json().catch(() => ({}));
+      setStatusType(response.ok ? 'success' : 'error');
+      setStatus(data.message || messages.requestFailed);
 
-      if (res.ok) {
-        setFirstName('');
-        setLastName('');
-        setPhone('');
-        setCountryCode('US');
-        setEmail('');
-        setMessage('');
+      if (response.ok) {
+        setValues({ ...EMPTY });
+        setCountryCode('IN');
       }
     } catch {
       setStatusType('error');
-      setStatus(contact.form.messages.network);
+      setStatus(messages.network);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <motion.form onSubmit={handleSubmit} className="row g-3 contact-form" {...fadeUpProps}>
-      {status && (
-        <div className={`form-toast form-toast-${statusType === 'error' ? 'error' : 'success'}`} role="status" aria-live="polite">
-          {status}
+    <>
+      <FormToast status={status} type={statusType} onDismiss={() => setStatus('')} />
+
+      <m.form ref={formRef} className="bx-form" onSubmit={handleSubmit} noValidate {...fadeUpProps}>
+        <div className="bx-form__grid">
+          <Field id="enquiry-first-name" label={contact.form.firstNameLabel} required error={errors.firstName}>
+            {(aria) => (
+              <input
+                {...aria}
+                name="firstName"
+                className="bx-input"
+                autoComplete="given-name"
+                placeholder={contact.form.firstNamePlaceholder}
+                value={values.firstName}
+                onChange={setValue('firstName')}
+              />
+            )}
+          </Field>
+
+          <Field id="enquiry-last-name" label={contact.form.lastNameLabel} required error={errors.lastName}>
+            {(aria) => (
+              <input
+                {...aria}
+                name="lastName"
+                className="bx-input"
+                autoComplete="family-name"
+                placeholder={contact.form.lastNamePlaceholder}
+                value={values.lastName}
+                onChange={setValue('lastName')}
+              />
+            )}
+          </Field>
         </div>
-      )}
-      <div className="col-md-6">
-        <label className="form-label">{contact.form.firstNameLabel} <span className="text-danger">*</span></label>
-        <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="form-control application-form-control contact-form-control" placeholder={contact.form.firstNamePlaceholder} required />
-      </div>
-      <div className="col-md-6">
-        <label className="form-label">{contact.form.lastNameLabel} <span className="text-danger">*</span></label>
-        <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="form-control application-form-control contact-form-control" placeholder={contact.form.lastNamePlaceholder} required />
-      </div>
-      <div className="col-md-6">
-        <label className="form-label">{contact.form.phoneLabel} <span className="text-danger">*</span></label>
-        <div className="d-flex gap-2">
-          <CountryCodeSelect value={countryCode} onChange={setCountryCode} />
-          <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))} className="form-control application-form-control contact-form-control" placeholder={contact.form.phonePlaceholder} required />
+
+        <div className="bx-form__grid">
+          <Field id="enquiry-phone" label={contact.form.phoneLabel} required error={errors.phone}>
+            {(aria) => (
+              <div className="bx-phone">
+                <CountryCodeSelect
+                  id="enquiry-country"
+                  value={countryCode}
+                  onChange={setCountryCode}
+                />
+                <input
+                  {...aria}
+                  name="phone"
+                  type="tel"
+                  inputMode="numeric"
+                  className="bx-input"
+                  autoComplete="tel-national"
+                  placeholder={contact.form.phonePlaceholder}
+                  value={values.phone}
+                  onChange={setValue('phone')}
+                />
+              </div>
+            )}
+          </Field>
+
+          <Field id="enquiry-email" label={contact.form.emailLabel} required error={errors.email}>
+            {(aria) => (
+              <input
+                {...aria}
+                name="email"
+                type="email"
+                className="bx-input"
+                autoComplete="email"
+                placeholder={contact.form.emailPlaceholder}
+                value={values.email}
+                onChange={setValue('email')}
+              />
+            )}
+          </Field>
         </div>
-      </div>
-      <div className="col-md-6">
-        <label className="form-label">{contact.form.emailLabel} <span className="text-danger">*</span></label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control application-form-control contact-form-control" placeholder={contact.form.emailPlaceholder} required />
-      </div>
-      <div className="col-12">
-        <label className="form-label">{contact.form.messageLabel} <span className="text-danger">*</span></label>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="form-control application-form-control contact-form-control" placeholder={contact.form.messagePlaceholder} rows={5} required />
-      </div>
-      <div className="col-12">
-        <motion.button
-          type="submit"
-          className="btn btn-success btn-lg contact-submit-btn"
-          whileHover={isSubmitting ? undefined : { y: -2, scale: 1.01 }}
-          whileTap={isSubmitting ? undefined : { scale: 0.99 }}
-          disabled={isSubmitting}
-          aria-busy={isSubmitting}
-        >
-          {isSubmitting ? (
-            <span className="d-inline-flex align-items-center gap-2">
-              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
-              {contact.form.messages.submitting || 'Sending...'}
-            </span>
-          ) : (
-            contact.form.submitButton
+
+        <Field id="enquiry-message" label={contact.form.messageLabel} required error={errors.message}>
+          {(aria) => (
+            <textarea
+              {...aria}
+              name="message"
+              className="bx-textarea"
+              rows={6}
+              placeholder={contact.form.messagePlaceholder}
+              value={values.message}
+              onChange={setValue('message')}
+            />
           )}
-        </motion.button>
-      </div>
-    </motion.form>
+        </Field>
+
+        <div>
+          <Button type="submit" size="lg" disabled={isSubmitting} aria-busy={isSubmitting} loading={isSubmitting}>
+            {isSubmitting ? messages.submitting : contact.form.submitButton}
+          </Button>
+        </div>
+      </m.form>
+    </>
   );
 }

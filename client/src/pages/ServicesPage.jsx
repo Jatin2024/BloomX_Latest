@@ -1,148 +1,121 @@
-import { motion } from 'framer-motion';
-import { NavLink } from 'react-router-dom';
-import PageHeader from '../components/PageHeader';
+import { Link } from 'react-router-dom';
+import PageHero from '../components/ui/PageHero';
+import Section, { Reveal } from '../components/ui/Section';
+import { ArrowIcon, CheckIcon, Eyebrow, SectionHeading, Tags } from '../components/ui/Primitives';
+import Approach from '../sections/Approach';
+import CtaBand from '../sections/CtaBand';
 import siteContent from '../content/siteContent.json';
-import { services, portfolio, industries, technologies } from '../components/DataSections';
-import { fadeUpProps } from '../utils/motion';
+import { industries, services, technologyGroups } from '../content/catalog';
+import { buildImage, media } from '../content/media';
+import useDocumentMeta from '../utils/useDocumentMeta';
 
-const { services: servicesContent } = siteContent;
-
-const serviceMeta = {
-  'Digital experiences': { icon: '01', label: 'Customer touchpoints' },
-  'Custom platforms': { icon: '02', label: 'Business systems' },
-  'API solutions': { icon: '03', label: 'Connected workflows' },
-  'Cloud engineering': { icon: '04', label: 'Infrastructure' }
-};
-
-const deliveryPillars = [
-  {
-    title: 'Strategy',
-    subtitle: 'Business alignment',
-    description: servicesContent.strategyDescription
-  },
-  {
-    title: 'Design',
-    subtitle: 'Premium product experiences',
-    description: servicesContent.designDescription
-  },
-  {
-    title: 'Delivery',
-    subtitle: 'Launch with confidence',
-    description: servicesContent.deliveryDescription
-  }
-];
+const copy = siteContent.services;
 
 export default function ServicesPage() {
+  useDocumentMeta({ ...copy.meta, path: '/services' });
+
   return (
-    <main>
-      <motion.section className="py-4 interactive-section services-hero-section" {...fadeUpProps}>
-        <div className="row g-4 align-items-center">
-          <div className="col-lg-7">
-            <div className="section-eyebrow mb-3">{servicesContent.eyebrow}</div>
-            <PageHeader title={servicesContent.pageTitle} subtitle="Scalable digital products, modern experiences, and reliable technical delivery designed to move your business forward." />
-          </div>
-          <div className="col-lg-5">
-            <motion.div
-              className="services-hero-card"
-              whileInView={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 24 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ duration: 0.55, delay: 0.08, ease: 'easeOut' }}
-            >
-              <div className="services-hero-metric">{servicesContent.heroMetric}</div>
-              <h3>{servicesContent.heroTitle}</h3>
-              <p className="mb-0">{servicesContent.heroDescription}</p>
-            </motion.div>
-          </div>
-        </div>
-      </motion.section>
-
-      <section className="py-4">
-        <div className="row g-4">
+    <>
+      <PageHero eyebrow={copy.eyebrow} title={copy.title} text={copy.text}>
+        <nav className="bx-page-hero__jump" aria-label="Services on this page">
           {services.map((service, index) => (
-            <div className="col-md-6 col-lg-3" key={service.title}>
-              <motion.div className="card h-100 shadow-sm border-0 services-card" {...fadeUpProps} transition={{ ...fadeUpProps.transition, delay: index * 0.08 }} whileHover={{ y: -10, scale: 1.01 }}>
-                <div className="card-body p-4 p-xl-4">
-                  <div className="services-card-top mb-4">
-                    <span className="services-card-icon">{serviceMeta[service.title]?.icon || '00'}</span>
-                    <span className="services-card-label">{serviceMeta[service.title]?.label || 'Solution'}</span>
-                  </div>
-                  <h5>{service.title}</h5>
-                  <p className="text-muted mb-0">{service.description}</p>
+            <a className="bx-jump" key={service.slug} href={`#${service.slug}`}>
+              <span className="bx-jump__num">{String(index + 1).padStart(2, '0')}</span>
+              {service.title}
+            </a>
+          ))}
+        </nav>
+      </PageHero>
+
+      <Section tight>
+        {services.map((service, index) => {
+          const image = buildImage(media[service.mediaKey], {
+            ratio: [4, 3],
+            sizes: '(min-width: 960px) 44vw, 92vw',
+            widths: [480, 720, 960, 1200]
+          });
+
+          return (
+            <article className="bx-service" id={service.slug} key={service.slug}>
+              <Reveal className="bx-service__media">
+                <figure className="bx-figure bx-figure--zoom bx-service__figure">
+                  <img {...image} />
+                </figure>
+              </Reveal>
+
+              <Reveal className="bx-service__body" delay={0.06}>
+                <Eyebrow>Service {String(index + 1).padStart(2, '0')}</Eyebrow>
+                <h2 className="bx-service__title">{service.title}</h2>
+                <p className="bx-lead">{service.description}</p>
+
+                <div>
+                  <p className="bx-label">{copy.deliverablesLabel}</p>
+                  <ul className="bx-service__list">
+                    {service.deliverables.map((item) => (
+                      <li key={item}>
+                        <CheckIcon />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </motion.div>
-            </div>
+
+                <div>
+                  <p className="bx-label">{copy.stackLabel}</p>
+                  <Tags items={service.stack} />
+                </div>
+
+                <div>
+                  <Link
+                    to={`/contact?service=${service.slug}`}
+                    className="bx-btn bx-btn--ghost"
+                  >
+                    {copy.serviceCta}
+                    <ArrowIcon />
+                  </Link>
+                </div>
+              </Reveal>
+            </article>
+          );
+        })}
+      </Section>
+
+      <Approach
+        id="delivery"
+        tone="sunken"
+        copy={{
+          eyebrow: copy.processEyebrow,
+          title: copy.processTitle,
+          text: siteContent.home.approach.text
+        }}
+      />
+
+      <Section>
+        <SectionHeading split eyebrow={copy.techEyebrow} title={copy.techTitle} text={copy.techText} />
+        <div className="bx-grid bx-grid--2" style={{ marginTop: 'var(--space-10)' }}>
+          {technologyGroups.map((group, index) => (
+            <Reveal key={group.label} delay={index * 0.06} className="bx-panel bx-panel--sunken">
+              <p className="bx-label">{group.label}</p>
+              <Tags items={group.items} />
+            </Reveal>
           ))}
         </div>
-      </section>
+      </Section>
 
-      <motion.section className="py-4 interactive-section services-pillars-section" {...fadeUpProps}>
-        <div className="text-center mb-5">
-          <div className="section-eyebrow mb-3">{servicesContent.deliveryEyebrow}</div>
-          <h2 className="mb-3">{servicesContent.deliveryTitle}</h2>
+      <Section tone="dark" tight>
+        <div className="bx-split bx-split--5-7">
+          <Reveal className="bx-stack bx-stack--sm">
+            <Eyebrow>{copy.industryEyebrow}</Eyebrow>
+            <h2>{copy.industryTitle}</h2>
+          </Reveal>
+          <Reveal delay={0.08} className="bx-stack">
+            <p className="bx-lead">{copy.industryText}</p>
+            <Tags items={industries} onDark />
+          </Reveal>
         </div>
-        <div className="row g-4">
-          {deliveryPillars.map((pillar, index) => (
-            <div className="col-lg-4" key={pillar.title}>
-              <motion.div className="card h-100 border-0 shadow-sm p-4 services-pillar-card" {...fadeUpProps} transition={{ ...fadeUpProps.transition, delay: index * 0.1 }} whileHover={{ y: -8 }}>
-                <div className="services-pillar-index mb-3">0{index + 1}</div>
-                <h5 className="mb-2">{pillar.title}</h5>
-                <p className="services-pillar-subtitle mb-3">{pillar.subtitle}</p>
-                <p className="text-muted mb-0">{pillar.description}</p>
-              </motion.div>
-            </div>
-          ))}
-        </div>
-      </motion.section>
+      </Section>
 
-      <section className="py-4 interactive-section services-portfolio-section">
-        <PageHeader title={servicesContent.portfolioTitle} />
-        <div className="row g-4">
-          {portfolio.map((item, index) => (
-            <div className="col-md-6 col-lg-4" key={item.title}>
-              <motion.div {...fadeUpProps} transition={{ ...fadeUpProps.transition, delay: index * 0.1 }} whileHover={{ y: -10, scale: 1.01 }}>
-                <NavLink to="/contact#contact-form" className="services-portfolio-link">
-                  <div className="card h-100 shadow-sm border-0 overflow-hidden services-portfolio-card">
-                    <img src={item.image} className="card-img-top services-portfolio-image" alt={item.title} loading="lazy" />
-                    <div className="card-body p-4">
-                      <div className="services-card-label mb-3">{servicesContent.portfolioBadge}</div>
-                      <h5>{item.title}</h5>
-                      <p className="text-muted mb-3">{item.description}</p>
-                      <span className="services-portfolio-cta">{servicesContent.portfolioCta}</span>
-                    </div>
-                  </div>
-                </NavLink>
-              </motion.div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <motion.section className="py-4 interactive-section services-ecosystem-section" {...fadeUpProps}>
-        <div className="row g-4 align-items-start">
-          <div className="col-lg-5">
-            <div className="section-eyebrow mb-3">{servicesContent.ecosystemEyebrow}</div>
-            <h2 className="mb-3">{servicesContent.industryTitle}</h2>
-            <p className="text-muted mb-0 services-ecosystem-copy">{servicesContent.industryDescription}</p>
-          </div>
-          <div className="col-lg-7">
-            <div className="d-flex flex-wrap gap-2 services-chip-cloud">
-              {industries.map((industry) => (
-                <span key={industry} className="industry-pill services-chip-pill">{industry}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </motion.section>
-
-      <motion.section className="py-4 interactive-section services-tech-section" {...fadeUpProps}>
-        <PageHeader title={servicesContent.technologyTitle} />
-        <div className="d-flex flex-wrap gap-2 services-chip-cloud">
-          {technologies.map((tech) => (
-            <span key={tech} className="industry-pill services-chip-pill">{tech}</span>
-          ))}
-        </div>
-      </motion.section>
-    </main>
+      <CtaBand secondaryTo="/work" />
+    </>
   );
 }

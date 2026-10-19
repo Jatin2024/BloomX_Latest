@@ -1,81 +1,103 @@
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useMemo, useRef } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import PageHero from '../components/ui/PageHero';
+import Section, { Reveal } from '../components/ui/Section';
+import { Eyebrow } from '../components/ui/Primitives';
 import ContactForm from '../components/ContactForm';
-import PageHeader from '../components/PageHeader';
 import siteContent from '../content/siteContent.json';
-import { fadeUpProps } from '../utils/motion';
+import { getService } from '../content/catalog';
+import useDocumentMeta from '../utils/useDocumentMeta';
 
-const { contact } = siteContent;
+const copy = siteContent.contact;
+const { footer } = siteContent;
 
 export default function ContactPage() {
-  const location = useLocation();
-  const formShellRef = useRef(null);
+  useDocumentMeta({ ...copy.meta, path: '/contact' });
 
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const panelRef = useRef(null);
+
+  // /contact?service=apis arrives from a service block and pre-fills the
+  // message so the visitor does not have to restate why they came.
+  const prefill = useMemo(() => {
+    const service = getService(searchParams.get('service'));
+    return service ? `${copy.servicePrefill}${service.title}.\n\n` : '';
+  }, [searchParams]);
+
+  // ScrollToTop already moves the page to the hash target; this only puts the
+  // caret in the first field. `#contact-form` is the previous site's anchor,
+  // kept working so older links still land correctly.
   useEffect(() => {
-    if (location.hash !== '#contact-form' || !formShellRef.current) {
-      return;
+    const targetsForm = location.hash === '#enquiry' || location.hash === '#contact-form';
+    if (!targetsForm || !panelRef.current) return undefined;
+
+    if (location.hash === '#contact-form') {
+      panelRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    formShellRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     const timeoutId = window.setTimeout(() => {
-      const firstInput = formShellRef.current?.querySelector('input, textarea, select, button');
-      firstInput?.focus();
-    }, 250);
+      panelRef.current?.querySelector('input, textarea')?.focus({ preventScroll: true });
+    }, 480);
 
     return () => window.clearTimeout(timeoutId);
   }, [location.hash]);
 
   return (
-    <main>
-      <motion.section className="py-4 interactive-section contact-hero-section" {...fadeUpProps}>
-        <div className="row g-4 align-items-center">
-          <div className="col-lg-7">
-            <div className="section-eyebrow mb-3">{contact.pageEyebrow}</div>
-            <PageHeader title={contact.pageTitle} subtitle={contact.introDescription} />
-          </div>
-          <div className="col-lg-5">
-            <motion.div
-              className="contact-hero-card"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ duration: 0.55, ease: 'easeOut' }}
-            >
-              <div className="contact-hero-badge">{contact.heroBadge}</div>
-              <h3>{contact.introTitle}</h3>
-              <p className="mb-3">{contact.responseTime}</p>
-              <a className="contact-hero-link" href={`mailto:${contact.directEmail}`}>{contact.directEmail}</a>
-            </motion.div>
-          </div>
-        </div>
-      </motion.section>
+    <>
+      <PageHero eyebrow={copy.eyebrow} title={copy.title} text={copy.text} />
 
-      <motion.section className="py-4 interactive-section contact-content-section" {...fadeUpProps}>
-        <div className="row g-4 align-items-stretch">
-          <div className="col-lg-5">
-            <div className="contact-info-card rounded-4 p-4 p-lg-5 shadow-sm h-100">
-              <div className="section-eyebrow mb-3">{contact.briefingEyebrow}</div>
-              <h3 className="mb-3">{contact.highlightTitle}</h3>
-              <ul className="contact-highlights mb-4">
-                {contact.highlightPoints.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
-              <div className="d-flex flex-wrap gap-2">
-                {contact.chips.map((chip) => (
-                  <span key={chip} className="contact-chip">{chip}</span>
+      <Section tight>
+        <div className="bx-contact__grid">
+          <Reveal className="bx-contact__aside">
+            <div className="bx-stack bx-stack--sm">
+              <Eyebrow>{copy.asideEyebrow}</Eyebrow>
+              <div className="bx-contact__steps">
+                {copy.steps.map((step, index) => (
+                  <p className="bx-contact__step" key={step}>
+                    <span className="bx-contact__step-num">{String(index + 1).padStart(2, '0')}</span>
+                    <span>{step}</span>
+                  </p>
                 ))}
               </div>
             </div>
-          </div>
-          <div className="col-lg-7">
-            <div id="contact-form" ref={formShellRef} className="contact-form-shell rounded-4 p-4 p-lg-5 shadow-sm h-100">
-              <ContactForm />
+
+            <div>
+              <h2 className="bx-label">{copy.detailsEyebrow}</h2>
+              <div className="bx-stack bx-stack--sm">
+                <div className="bx-contact__detail">
+                  <span className="bx-contact__detail-label">{footer.labels.email}</span>
+                  <a href={`mailto:${footer.contact.email}`}>{footer.contact.email}</a>
+                </div>
+                <div className="bx-contact__detail">
+                  <span className="bx-contact__detail-label">{footer.labels.phone}</span>
+                  <a href={`tel:${footer.contact.phone.replace(/[^+\d]/g, '')}`}>
+                    {footer.contact.phone}
+                  </a>
+                </div>
+                <div className="bx-contact__detail">
+                  <span className="bx-contact__detail-label">{footer.labels.location}</span>
+                  <span>{footer.contact.location}</span>
+                </div>
+                <div className="bx-contact__detail">
+                  <span className="bx-contact__detail-label">{copy.responseLabel}</span>
+                  <span>{copy.responseTime}</span>
+                </div>
+              </div>
             </div>
+          </Reveal>
+
+          <div ref={panelRef} id="enquiry">
+            <Reveal className="bx-form-panel" delay={0.08}>
+              <div className="bx-stack bx-stack--sm" style={{ marginBottom: 'var(--space-6)' }}>
+                <h2>{copy.formTitle}</h2>
+                <p className="bx-field__hint">{copy.formText}</p>
+              </div>
+              <ContactForm initialMessage={prefill} />
+            </Reveal>
           </div>
         </div>
-      </motion.section>
-    </main>
+      </Section>
+    </>
   );
 }

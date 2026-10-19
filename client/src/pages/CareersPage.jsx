@@ -1,103 +1,101 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { jobOpenings } from '../components/DataSections';
+import { useRef, useState } from 'react';
+import PageHero from '../components/ui/PageHero';
+import Section, { Reveal } from '../components/ui/Section';
+import { ArrowIcon, CheckIcon, Eyebrow, SectionHeading, Tags } from '../components/ui/Primitives';
 import JobApplicationForm from '../components/JobApplicationForm';
-import PageHeader from '../components/PageHeader';
 import siteContent from '../content/siteContent.json';
-import { fadeUpProps } from '../utils/motion';
+import { jobOpenings } from '../content/catalog';
+import { buildImage, media } from '../content/media';
+import useDocumentMeta from '../utils/useDocumentMeta';
 
-const { careers } = siteContent;
+const copy = siteContent.careers;
+
+const cultureImage = buildImage(media.teamSession, {
+  ratio: [16, 10],
+  sizes: '(min-width: 980px) 38vw, 92vw',
+  widths: [480, 720, 960]
+});
 
 export default function CareersPage() {
+  useDocumentMeta({ ...copy.meta, path: '/careers' });
+
   const [selectedPosition, setSelectedPosition] = useState(jobOpenings[0]?.title || '');
+  const formRef = useRef(null);
+
+  const applyTo = (title) => {
+    setSelectedPosition(title);
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.setTimeout(() => {
+      formRef.current?.querySelector('select, input')?.focus({ preventScroll: true });
+    }, 420);
+  };
 
   return (
-    <main>
-      <motion.section className="py-4 interactive-section careers-hero-section" {...fadeUpProps}>
-        <div className="row g-4 align-items-center">
-          <div className="col-lg-7">
-            <div className="section-eyebrow mb-3">{careers.heroEyebrow}</div>
-            <PageHeader title={careers.pageTitle} subtitle={careers.subtitle} />
-          </div>
-          <div className="col-lg-5">
-            <motion.div
-              className="careers-spotlight-card"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ duration: 0.55, ease: 'easeOut' }}
-            >
-              <div className="careers-spotlight-tag">{careers.spotlightTag}</div>
-              <h3>{careers.spotlightTitle}</h3>
-              <p className="mb-0">{careers.spotlightDescription}</p>
-            </motion.div>
-          </div>
-        </div>
-      </motion.section>
+    <>
+      <PageHero
+        eyebrow={copy.eyebrow}
+        title={copy.title}
+        text={copy.text}
+        aside={<Tags items={copy.benefits} accent />}
+      />
 
-      <section className="py-4">
-        <div className="section-eyebrow mb-3">{careers.rolesEyebrow}</div>
-        <div className="row g-4">
+      <Section tight>
+        <SectionHeading eyebrow={copy.rolesEyebrow} title={copy.rolesTitle} />
+
+        <div className="bx-rows" style={{ marginTop: 'var(--space-8)' }}>
           {jobOpenings.map((job, index) => (
-            <div className="col-md-6 col-lg-4" key={job.title}>
-              <motion.div className="card h-100 shadow-sm border-0 careers-role-card" {...fadeUpProps} transition={{ ...fadeUpProps.transition, delay: index * 0.08 }} whileHover={{ y: -10, scale: 1.01 }}>
-                <div className="card-body p-4">
-                  <div className="careers-role-top mb-3">
-                    <span className="careers-role-index">0{index + 1}</span>
-                    <span className="careers-role-label">{careers.roleLabel}</span>
-                  </div>
-                  <h5>{job.title}</h5>
-                  <p className="text-muted mb-4">{job.description}</p>
-                  <a
-                    href="#apply-form"
-                    className="btn btn-outline-success careers-apply-btn"
-                    onClick={() => setSelectedPosition(job.title)}
-                  >
-                    {careers.roleCta}
-                  </a>
-                </div>
-              </motion.div>
-            </div>
+            <Reveal className="bx-role" key={job.title} delay={index * 0.06} y={14}>
+              <span className="bx-capability__index">{String(index + 1).padStart(2, '0')}</span>
+              <h3 className="bx-role__title">{job.title}</h3>
+              <p className="bx-role__text">{job.description}</p>
+              <div>
+                <button type="button" className="bx-btn bx-btn--ghost bx-btn--sm" onClick={() => applyTo(job.title)}>
+                  {copy.roleCta}
+                  <ArrowIcon />
+                </button>
+              </div>
+            </Reveal>
           ))}
         </div>
-      </section>
+      </Section>
 
-      <motion.section className="py-4 interactive-section careers-application-section" {...fadeUpProps} id="apply-form">
-        <div className="row g-4 align-items-center">
-          <div className="col-lg-5">
-            <div className="careers-apply-intro rounded-4 p-4 p-lg-5 shadow-sm h-100">
-              <div className="section-eyebrow mb-3">{careers.applicationEyebrow}</div>
-              <h2>{careers.applyTitle}</h2>
-              <p className="text-muted mb-3">{careers.applyDescription}</p>
-              <p className="text-muted careers-company-copy mb-4">{careers.companyIntro}</p>
-
-              <div className="careers-why-block mb-4">
-                <h6 className="careers-why-title mb-3">{careers.whyApplyTitle}</h6>
-                <ul className="careers-why-list mb-0">
-                  {careers.whyApplyPoints.map((point) => (
-                    <li key={point}>{point}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="d-flex flex-wrap gap-2">
-                {careers.benefits.map((benefit) => (
-                  <span key={benefit} className="careers-benefit-chip">{benefit}</span>
-                ))}
-              </div>
+      <Section tone="sunken" id="apply-form">
+        <div className="bx-contact__grid">
+          <Reveal className="bx-contact__aside">
+            <div className="bx-stack bx-stack--sm">
+              <Eyebrow>{copy.applyEyebrow}</Eyebrow>
+              <h2>{copy.applyTitle}</h2>
+              <p className="bx-lead">{copy.applyText}</p>
             </div>
-          </div>
-          <div className="col-lg-7">
-            <div className="careers-form-shell rounded-4 p-4 p-lg-5 shadow-sm h-100">
+
+            <figure className="bx-figure bx-figure--zoom" style={{ aspectRatio: '16 / 10', borderRadius: 'var(--r-md)' }}>
+              <img {...cultureImage} />
+            </figure>
+
+            <div>
+              <h3 className="bx-label">{copy.whyTitle}</h3>
+              <ul className="bx-service__list">
+                {copy.whyPoints.map((point) => (
+                  <li key={point}>
+                    <CheckIcon />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+
+          <div ref={formRef}>
+            <Reveal className="bx-form-panel" delay={0.08}>
               <JobApplicationForm
                 positions={jobOpenings.map((job) => job.title)}
                 selectedPosition={selectedPosition}
                 onPositionChange={setSelectedPosition}
               />
-            </div>
+            </Reveal>
           </div>
         </div>
-      </motion.section>
-    </main>
+      </Section>
+    </>
   );
 }

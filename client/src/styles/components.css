@@ -1,0 +1,679 @@
+/* =========================================================================
+   Components: the reusable surface of the design system.
+   Every variant here is used by at least one page — no speculative styles.
+   ========================================================================= */
+
+/* ---- Buttons ------------------------------------------------------------ */
+
+.bx-btn {
+  --btn-bg: var(--blue-500);
+  --btn-fg: #fff;
+  --btn-border: var(--blue-500);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.8125rem 1.5rem;
+  min-height: 2.875rem;
+  border: 1px solid var(--btn-border);
+  border-radius: var(--r-sm);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  letter-spacing: -0.004em;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out),
+    color var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+
+.bx-btn:hover {
+  color: var(--btn-fg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.bx-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.bx-btn[disabled],
+.bx-btn[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.bx-btn--lg {
+  padding: 1rem 1.875rem;
+  min-height: 3.25rem;
+  font-size: var(--fs-body);
+}
+
+.bx-btn--sm {
+  padding: 0.5rem 1rem;
+  min-height: 2.25rem;
+  font-size: var(--fs-xs);
+}
+
+.bx-btn--block {
+  width: 100%;
+}
+
+.bx-btn--primary:hover {
+  --btn-bg: var(--blue-600);
+  --btn-border: var(--blue-600);
+}
+
+.bx-btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--ink-800);
+  --btn-border: var(--line-strong);
+}
+
+.bx-btn--ghost:hover {
+  --btn-bg: rgba(63, 114, 175, 0.08);
+  --btn-border: var(--blue-500);
+  --btn-fg: var(--blue-600);
+  box-shadow: none;
+}
+
+.bx-btn--on-dark {
+  --btn-bg: transparent;
+  --btn-fg: var(--text-on-dark);
+  --btn-border: rgba(219, 226, 239, 0.32);
+}
+
+.bx-btn--on-dark:hover {
+  --btn-bg: rgba(219, 226, 239, 0.1);
+  --btn-border: rgba(219, 226, 239, 0.58);
+  box-shadow: none;
+}
+
+.bx-btn--quiet {
+  --btn-bg: transparent;
+  --btn-fg: var(--accent);
+  --btn-border: transparent;
+  padding-inline: 0;
+}
+
+.bx-btn--quiet:hover {
+  box-shadow: none;
+  transform: none;
+  --btn-fg: var(--accent-hover);
+}
+
+.bx-btn__spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: bx-spin 0.7s linear infinite;
+  flex: none;
+}
+
+@keyframes bx-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- Arrow link ---------------------------------------------------------- */
+
+.bx-arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* Padding keeps the hit area at ~36px without changing the visual
+     position of the label (WCAG 2.5.8 target size). */
+  padding-block: 0.375rem;
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  color: var(--accent);
+}
+
+.bx-arrow-link__icon {
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.bx-arrow-link:hover .bx-arrow-link__icon,
+a:hover > .bx-arrow-link .bx-arrow-link__icon {
+  transform: translateX(4px);
+}
+
+.bx-section--dark .bx-arrow-link {
+  color: var(--accent-on-dark);
+}
+
+/* ---- Tags ---------------------------------------------------------------- */
+
+.bx-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bx-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3125rem 0.6875rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.bx-tag--accent {
+  border-color: var(--line-accent);
+  background: var(--blue-100);
+  color: var(--blue-600);
+}
+
+.bx-section--dark .bx-tag,
+.bx-tag--on-dark {
+  border-color: var(--line-dark);
+  background: rgba(219, 226, 239, 0.06);
+  color: var(--text-on-dark-muted);
+}
+
+/* ---- Panels & cards ------------------------------------------------------ */
+
+.bx-panel {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: clamp(1.5rem, 1rem + 1.8vw, 2.75rem);
+}
+
+.bx-panel--sunken {
+  background: var(--surface-sunken);
+}
+
+.bx-panel--dark {
+  background: var(--surface-dark);
+  border-color: var(--line-dark);
+  color: var(--text-on-dark);
+}
+
+.bx-panel--raised {
+  box-shadow: var(--shadow-md);
+}
+
+.bx-panel--flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ---- Figures / imagery ---------------------------------------------------- */
+
+.bx-figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--mist);
+  isolation: isolate;
+}
+
+.bx-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--dur-4) var(--ease-out);
+}
+
+.bx-figure--zoom:hover img,
+a:hover .bx-figure--zoom img,
+.bx-project:hover .bx-figure--zoom img {
+  transform: scale(1.045);
+}
+
+/* Navy duotone treatment keeps photography inside the brand palette. */
+.bx-figure--tinted::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(11, 31, 56, 0.16) 0%, rgba(11, 31, 56, 0.78) 100%),
+    linear-gradient(135deg, rgba(63, 114, 175, 0.4) 0%, rgba(17, 45, 78, 0.5) 100%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.bx-figure--scrim::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 31, 56, 0) 38%, rgba(7, 21, 42, 0.86) 100%);
+  pointer-events: none;
+}
+
+.bx-figure__caption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: clamp(1rem, 0.6rem + 1.4vw, 1.75rem);
+  color: var(--text-on-dark);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.bx-figure__label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-200);
+}
+
+/* ---- Hairline list (editorial rows) --------------------------------------- */
+
+.bx-rows {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+
+.bx-section--dark .bx-rows {
+  border-top-color: var(--line-dark);
+}
+
+.bx-row-item {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  padding-block: clamp(1.25rem, 1rem + 1vw, 1.9rem);
+  border-bottom: 1px solid var(--line);
+  isolation: isolate;
+}
+
+.bx-section--dark .bx-row-item {
+  border-bottom-color: var(--line-dark);
+}
+
+.bx-row-item__index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  color: var(--text-soft);
+  transition: color var(--dur-2) var(--ease-out);
+}
+
+/* ---- Form system ---------------------------------------------------------- */
+
+.bx-form {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.bx-form__grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+}
+
+.bx-field {
+  display: grid;
+  gap: 0.4375rem;
+  min-width: 0;
+}
+
+.bx-field__label {
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.bx-field__req {
+  color: var(--danger);
+  margin-left: 0.125rem;
+}
+
+.bx-input,
+.bx-textarea,
+.bx-select {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 0.9375rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  transition:
+    border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    background-color var(--dur-2) var(--ease-out);
+}
+
+.bx-textarea {
+  min-height: 9rem;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.bx-select {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%2340587a' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M1 1.5 6 6.5l5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9375rem center;
+  background-size: 0.75rem;
+  cursor: pointer;
+}
+
+.bx-input::placeholder,
+.bx-textarea::placeholder {
+  color: var(--ink-300);
+}
+
+.bx-input:focus,
+.bx-textarea:focus,
+.bx-select:focus {
+  outline: none;
+  border-color: var(--blue-500);
+  box-shadow: var(--shadow-focus);
+}
+
+.bx-input[aria-invalid='true'],
+.bx-textarea[aria-invalid='true'],
+.bx-select[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.bx-input[aria-invalid='true']:focus,
+.bx-textarea[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px rgba(180, 48, 58, 0.18);
+}
+
+.bx-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  font-size: var(--fs-xs);
+  color: var(--danger);
+  min-height: 1.1em;
+}
+
+.bx-field__hint {
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+}
+
+/* File input — styled natively (including ::file-selector-button) so it
+   stays keyboard-operable and announces its own filename. */
+.bx-file-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.6875rem 0.875rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+  transition: border-color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+}
+
+.bx-file-input::file-selector-button {
+  margin-right: 0.875rem;
+  padding: 0.4375rem 0.9375rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  color: var(--ink-800);
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  cursor: pointer;
+  transition: border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+
+.bx-file-input:hover,
+.bx-file-input:focus {
+  border-color: var(--blue-500);
+  background: var(--blue-100);
+  outline: none;
+}
+
+.bx-file-input:hover::file-selector-button {
+  border-color: var(--blue-500);
+  color: var(--blue-600);
+}
+
+.bx-file-input[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+/* Phone row: country selector + number */
+.bx-phone {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.bx-phone .bx-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ---- Country listbox ------------------------------------------------------- */
+
+.bx-country {
+  position: relative;
+  flex: none;
+  width: 7.25rem;
+}
+
+.bx-country__trigger {
+  width: 100%;
+  height: 100%;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+.bx-country__trigger:hover {
+  border-color: var(--blue-400);
+}
+
+.bx-country__trigger[aria-expanded='true'] {
+  border-color: var(--blue-500);
+  box-shadow: var(--shadow-focus);
+}
+
+.bx-country__chevron {
+  flex: none;
+  opacity: 0.6;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.bx-country__trigger[aria-expanded='true'] .bx-country__chevron {
+  transform: rotate(180deg);
+}
+
+.bx-country__panel {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  left: 0;
+  z-index: var(--z-overlay);
+  width: min(19rem, calc(100vw - 2.5rem));
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.375rem;
+}
+
+.bx-country__search {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--fs-xs);
+}
+
+.bx-country__list {
+  max-height: 14rem;
+  overflow-y: auto;
+  display: grid;
+  gap: 0.125rem;
+  scrollbar-width: thin;
+}
+
+.bx-country__option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  text-align: left;
+  font-size: var(--fs-xs);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.bx-country__option:hover,
+.bx-country__option[data-active='true'] {
+  background: var(--blue-100);
+  color: var(--blue-600);
+}
+
+.bx-country__option[aria-selected='true'] {
+  font-weight: 650;
+}
+
+.bx-country__dial {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--text-soft);
+}
+
+.bx-country__empty {
+  padding: 0.75rem 0.625rem;
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+}
+
+/* ---- Toast ----------------------------------------------------------------- */
+
+.bx-toast-region {
+  position: fixed;
+  top: calc(var(--header-h) + 0.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  width: min(30rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.bx-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1.125rem;
+  border-radius: var(--r-md);
+  border: 1px solid;
+  box-shadow: var(--shadow-lg);
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  pointer-events: auto;
+}
+
+.bx-toast--success {
+  background: var(--success-surface);
+  border-color: rgba(31, 122, 92, 0.3);
+  color: #13543f;
+}
+
+.bx-toast--error {
+  background: var(--danger-surface);
+  border-color: rgba(180, 48, 58, 0.28);
+  color: #8d222b;
+}
+
+.bx-toast__icon {
+  flex: none;
+  margin-top: 0.1em;
+}
+
+.bx-toast__close {
+  margin-left: auto;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+}
+
+.bx-toast__close:hover {
+  opacity: 1;
+  background: rgba(17, 45, 78, 0.08);
+}
+
+/* ---- Misc ------------------------------------------------------------------- */
+
+.bx-divider {
+  height: 1px;
+  background: var(--line);
+  border: 0;
+}
+
+.bx-section--dark .bx-divider {
+  background: var(--line-dark);
+}
+
+/* Small uppercase label used above lists and groups. */
+.bx-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 1rem;
+}
+
+.bx-note {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+}

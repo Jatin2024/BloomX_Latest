@@ -1,0 +1,175 @@
+/* =========================================================================
+   BloomX design tokens
+   Single source of truth for colour, type, space, line, shadow and motion.
+   Brand palette (unchanged): #112D4E / #3F72AF / #DBE2EF / #F9F7F7
+   ========================================================================= */
+
+:root {
+  /* ---- Brand ---------------------------------------------------------- */
+  --brand-navy: #112d4e;
+  --brand-blue: #3f72af;
+  --brand-mist: #dbe2ef;
+  --brand-paper: #f9f7f7;
+
+  /* ---- Supporting neutrals derived from the brand navy ---------------- */
+  --ink-950: #07152a;
+  --ink-900: #0b1f38;
+  --ink-800: #112d4e;
+  --ink-700: #1b3c63;
+  --ink-600: #2c5080;
+  --ink-500: #40587a;
+  --ink-400: #647896;
+  --ink-300: #93a4bd;
+  --ink-200: #c3cedf;
+
+  --blue-700: #2b547f;
+  --blue-600: #35628f;
+  --blue-500: #3f72af;
+  --blue-400: #6b99cf;
+  --blue-200: #b7cde8;
+  --blue-100: #e7eff8;
+
+  --paper: #f9f7f7;
+  --paper-raised: #ffffff;
+  --paper-sunken: #f1f4f9;
+  --mist: #dbe2ef;
+
+  /* Legacy aliases retained so older rules and the runtime theme hook keep
+     working. App.jsx writes --color-1..4 from siteContent.theme.palette. */
+  --color-1: var(--paper);
+  --color-2: var(--mist);
+  --color-3: var(--blue-500);
+  --color-4: var(--ink-800);
+  --color-3-rgb: 63, 114, 175;
+  --color-4-rgb: 17, 45, 78;
+
+  /* ---- Semantic surfaces & text --------------------------------------- */
+  --surface: var(--paper);
+  --surface-raised: var(--paper-raised);
+  --surface-sunken: var(--paper-sunken);
+  --surface-dark: var(--ink-900);
+  --surface-dark-raised: #12294a;
+
+  --text: var(--ink-800);
+  --text-muted: var(--ink-500);
+  --text-soft: var(--ink-400);
+  --text-on-dark: #eaf1fa;
+  --text-on-dark-muted: rgba(219, 226, 239, 0.7);
+  --text-on-dark-soft: rgba(219, 226, 239, 0.5);
+
+  --accent: var(--blue-500);
+  --accent-hover: var(--blue-600);
+  --accent-on-dark: var(--blue-400);
+
+  --danger: #b4303a;
+  --danger-surface: #fdeced;
+  --success: #1f7a5c;
+  --success-surface: #e7f5f0;
+
+  /* ---- Lines ----------------------------------------------------------- */
+  --line: rgba(17, 45, 78, 0.12);
+  --line-soft: rgba(17, 45, 78, 0.07);
+  --line-strong: rgba(17, 45, 78, 0.22);
+  --line-dark: rgba(219, 226, 239, 0.16);
+  --line-dark-soft: rgba(219, 226, 239, 0.09);
+  --line-accent: rgba(63, 114, 175, 0.42);
+
+  /* ---- Type ------------------------------------------------------------ */
+  --font-sans: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --fs-display: clamp(2.6rem, 1.35rem + 4.6vw, 5rem);
+  --fs-h1: clamp(2.15rem, 1.4rem + 2.9vw, 3.6rem);
+  --fs-h2: clamp(1.7rem, 1.25rem + 1.9vw, 2.6rem);
+  --fs-h3: clamp(1.3rem, 1.1rem + 0.9vw, 1.75rem);
+  --fs-h4: clamp(1.08rem, 1rem + 0.35vw, 1.25rem);
+  --fs-lead: clamp(1.05rem, 0.99rem + 0.34vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-sm: 0.9375rem;
+  --fs-xs: 0.8125rem;
+  --fs-eyebrow: 0.75rem;
+
+  --lh-tight: 1.04;
+  --lh-snug: 1.18;
+  --lh-heading: 1.3;
+  --lh-body: 1.65;
+
+  --tracking-display: -0.032em;
+  --tracking-heading: -0.022em;
+  --tracking-body: -0.006em;
+  --tracking-eyebrow: 0.16em;
+
+  --measure: 62ch;
+  --measure-tight: 46ch;
+
+  /* ---- Space (4px base) ------------------------------------------------ */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  --section-y: clamp(4rem, 2.5rem + 5.5vw, 8rem);
+  --section-y-tight: clamp(2.75rem, 2rem + 3vw, 4.5rem);
+
+  /* ---- Shell & grid ----------------------------------------------------- */
+  --shell-max: 1240px;
+  --shell-max-wide: 1400px;
+  --shell-pad: clamp(1.25rem, 1rem + 2.4vw, 3rem);
+  --grid-gap: clamp(1.5rem, 1rem + 1.8vw, 3rem);
+  --header-h: 4.5rem;
+
+  /* ---- Radius (restrained — not everything is rounded) ------------------ */
+  --r-xs: 3px;
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ---- Elevation -------------------------------------------------------- */
+  --shadow-xs: 0 1px 2px rgba(17, 45, 78, 0.06);
+  --shadow-sm: 0 2px 4px rgba(17, 45, 78, 0.05), 0 8px 18px -12px rgba(17, 45, 78, 0.2);
+  --shadow-md: 0 14px 34px -18px rgba(17, 45, 78, 0.34);
+  --shadow-lg: 0 34px 70px -34px rgba(11, 31, 56, 0.48);
+  --shadow-focus: 0 0 0 3px rgba(63, 114, 175, 0.28);
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 380ms;
+  --dur-4: 620ms;
+
+  /* ---- Z layers ---------------------------------------------------------- */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-overlay: 300;
+  /* The header sits above the mobile panel so its close control stays
+     visible and tappable while the menu is open. */
+  --z-header: 320;
+  --z-toast: 400;
+}
+
+/* Breakpoints used across the stylesheets (documented, not programmatic):
+   360 / 390  small mobile
+   560        large mobile
+   768        tablet
+   1024       laptop
+   1280       desktop
+   1440+      wide desktop                                                   */
+
+@media (max-width: 767.98px) {
+  :root {
+    --header-h: 4rem;
+  }
+}

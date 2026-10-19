@@ -1,0 +1,224 @@
+/* =========================================================================
+   Layout: full-bleed sections, the content shell, and the editorial grid.
+   Sections own their own vertical rhythm and background tone so the page
+   can alternate between light and dark bands.
+   ========================================================================= */
+
+.bx-shell {
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: var(--shell-pad);
+}
+
+.bx-shell--wide {
+  max-width: var(--shell-max-wide);
+}
+
+.bx-shell--narrow {
+  max-width: 880px;
+}
+
+/* ---- Section ------------------------------------------------------------ */
+
+.bx-section {
+  position: relative;
+  padding-block: var(--section-y);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.bx-section--tight {
+  padding-block: var(--section-y-tight);
+}
+
+.bx-section--flush-top {
+  padding-top: calc(var(--header-h) + var(--section-y-tight));
+}
+
+.bx-section--sunken {
+  background: var(--surface-sunken);
+}
+
+.bx-section--mist {
+  background: linear-gradient(180deg, var(--surface) 0%, var(--mist) 100%);
+}
+
+.bx-section--dark {
+  background: var(--surface-dark);
+  color: var(--text-on-dark);
+}
+
+.bx-section--dark h1,
+.bx-section--dark h2,
+.bx-section--dark h3,
+.bx-section--dark h4 {
+  color: var(--text-on-dark);
+}
+
+.bx-section--dark .bx-lead,
+.bx-section--dark .bx-muted {
+  color: var(--text-on-dark-muted);
+}
+
+.bx-section--rule-top {
+  border-top: 1px solid var(--line);
+}
+
+.bx-section--dark.bx-section--rule-top {
+  border-top-color: var(--line-dark);
+}
+
+/* ---- Eyebrow ------------------------------------------------------------ */
+
+.bx-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
+}
+
+.bx-eyebrow::before {
+  content: '';
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
+.bx-eyebrow--plain::before {
+  display: none;
+}
+
+.bx-section--dark .bx-eyebrow,
+.bx-eyebrow--on-dark {
+  color: var(--accent-on-dark);
+}
+
+/* ---- Section heading block ---------------------------------------------- */
+
+.bx-heading {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 44rem;
+}
+
+.bx-heading__title {
+  font-size: var(--fs-h2);
+}
+
+.bx-heading--center {
+  margin-inline: auto;
+  text-align: center;
+  justify-items: center;
+}
+
+.bx-heading--split {
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: end;
+}
+
+@media (min-width: 900px) {
+  .bx-heading--split {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: var(--grid-gap);
+  }
+
+  .bx-heading--split .bx-heading__aside {
+    padding-bottom: 0.35rem;
+  }
+}
+
+/* ---- Editorial grid ------------------------------------------------------ */
+
+.bx-grid {
+  display: grid;
+  gap: var(--grid-gap);
+}
+
+.bx-grid--2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.bx-grid--3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+}
+
+.bx-split {
+  display: grid;
+  gap: var(--grid-gap);
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .bx-split--7-5 {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .bx-split--5-7 {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .bx-split--6-6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bx-split--4-8 {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  }
+}
+
+.bx-stack {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.bx-stack--sm {
+  gap: var(--space-3);
+}
+
+.bx-stack--lg {
+  gap: var(--space-8);
+}
+
+.bx-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.bx-sticky {
+  position: sticky;
+  top: calc(var(--header-h) + 2rem);
+}
+
+@media (max-width: 959.98px) {
+  .bx-sticky {
+    position: static;
+  }
+}
+
+/* ---- Decorative blueprint grid (used sparingly on dark bands) ----------- */
+
+.bx-blueprint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(219, 226, 239, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(219, 226, 239, 0.05) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: radial-gradient(ellipse 100% 90% at 50% 0%, #000 10%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 90% at 50% 0%, #000 10%, transparent 85%);
+}

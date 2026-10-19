@@ -1,87 +1,200 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import siteContent from '../content/siteContent.json';
 import { getCountryOptions } from '../utils/phoneValidation';
 
 const { forms } = siteContent;
 
-export default function CountryCodeSelect({ value, onChange }) {
+/**
+ * Dialling-code picker.
+ *
+ * Rebuilt as a proper listbox: the trigger owns the aria state, the list is
+ * navigable with Up/Down/Home/End, Enter and Escape, and the active option
+ * is kept scrolled into view. Closing returns focus to the trigger.
+ */
+export default function CountryCodeSelect({ value, onChange, id = 'country-code' }) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const wrapperRef = useRef(null);
+  const triggerRef = useRef(null);
+  const searchRef = useRef(null);
+  const listRef = useRef(null);
 
   const countries = getCountryOptions();
-  const selectedCountry = countries.find((country) => country.code === value) || countries[0];
+  const selected = countries.find((country) => country.code === value) || countries[0];
 
-  const filteredCountries = countries.filter((country) => {
-    const query = search.toLowerCase();
-    return !query || country.name.toLowerCase().includes(query);
-  });
+  const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return countries;
+    return countries.filter(
+      (country) =>
+        country.name.toLowerCase().includes(query) ||
+        country.code.toLowerCase().includes(query) ||
+        country.dialCode.includes(query)
+    );
+  }, [countries, search]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    if (!isOpen) return undefined;
+
+    const handlePointerDown = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    document.addEventListener('mousedown', handlePointerDown);
+    return () => document.removeEventListener('mousedown', handlePointerDown);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setSearch('');
+    const index = Math.max(0, countries.findIndex((country) => country.code === value));
+    setActiveIndex(index);
+    // Focus the filter input so typing narrows the list immediately.
+    window.requestAnimationFrame(() => searchRef.current?.focus());
+  }, [isOpen, value, countries]);
+
+  useEffect(() => {
+    if (!isOpen || !listRef.current) return;
+    const node = listRef.current.children[activeIndex];
+    node?.scrollIntoView({ block: 'nearest' });
+  }, [activeIndex, isOpen]);
+
+  const close = (returnFocus = true) => {
+    setIsOpen(false);
+    if (returnFocus) triggerRef.current?.focus();
+  };
+
+  const commit = (country) => {
+    onChange(country.code);
+    close();
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setActiveIndex((index) => Math.min(index + 1, filtered.length - 1));
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setActiveIndex((index) => Math.max(index - 1, 0));
+      return;
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault();
+      setActiveIndex(0);
+      return;
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault();
+      setActiveIndex(Math.max(filtered.length - 1, 0));
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const country = filtered[activeIndex];
+      if (country) commit(country);
+    }
+  };
+
+  const listboxId = `${id}-listbox`;
 
   return (
-    <div className="country-code-select" ref={wrapperRef} style={{ position: 'relative', width: '120px', flexShrink: 0 }}>
+    <div className="bx-country" ref={wrapperRef}>
       <button
+        ref={triggerRef}
         type="button"
-        className="form-select application-form-control"
-        onClick={() => setIsOpen((prev) => !prev)}
-        style={{ width: '100%', textAlign: 'left', height: '2.8rem', whiteSpace: 'nowrap' }}
-        title={`${selectedCountry.name} (${selectedCountry.code}) ${selectedCountry.dialCode}`}
+        id={id}
+        className="bx-country__trigger"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? listboxId : undefined}
+        aria-label={`${forms.countrySelect.label}: ${selected.name} ${selected.dialCode}`}
+        onClick={() => setIsOpen((open) => !open)}
+        onKeyDown={(event) => {
+          if (!isOpen && (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            setIsOpen(true);
+          }
+        }}
       >
-        {selectedCountry.flag} {selectedCountry.dialCode}
+        <span aria-hidden="true">{selected.flag}</span>
+        <span>{selected.dialCode}</span>
+        <svg
+          className="bx-country__chevron"
+          width="10"
+          height="7"
+          viewBox="0 0 12 8"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          aria-hidden="true"
+        >
+          <path d="M1 1.5 6 6.5l5-5" />
+        </svg>
       </button>
 
       {isOpen && (
-        <div
-          className="country-code-dropdown"
-          style={{
-            position: 'absolute',
-            top: 'calc(100% + 0.25rem)',
-            left: 0,
-            right: 'auto',
-            minWidth: '260px',
-            zIndex: 1000,
-            background: 'white',
-            border: '1px solid #d9e2ef',
-            borderRadius: '0.5rem',
-            boxShadow: '0 8px 24px rgba(17,45,78,0.16)',
-            maxHeight: '220px',
-            overflowY: 'auto',
-            padding: '0.35rem'
-          }}
-        >
+        <div className="bx-country__panel" onKeyDown={handleKeyDown}>
           <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            ref={searchRef}
+            type="text"
+            className="bx-input bx-country__search"
             placeholder={forms.countrySelect.searchPlaceholder}
-            className="form-control form-control-sm mb-2"
-            style={{ fontSize: '0.9rem' }}
+            aria-label={forms.countrySelect.searchPlaceholder}
+            aria-controls={listboxId}
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setActiveIndex(0);
+            }}
           />
-          {filteredCountries.map((country) => (
-            <button
-              key={country.code}
-              type="button"
-              className="btn btn-light w-100 text-start"
-              style={{ marginBottom: '0.2rem', fontSize: '0.9rem' }}
-              onClick={() => {
-                onChange(country.code);
-                setIsOpen(false);
-                setSearch('');
-              }}
+
+          {filtered.length ? (
+            <ul
+              id={listboxId}
+              ref={listRef}
+              className="bx-country__list"
+              role="listbox"
+              aria-label={forms.countrySelect.label}
             >
-              {country.flag} {country.name} ({country.code}) {country.dialCode}
-            </button>
-          ))}
-          {!filteredCountries.length && <div className="text-muted small px-2 py-1">No countries found</div>}
+              {filtered.map((country, index) => (
+                <li key={country.code} role="presentation">
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={country.code === value}
+                    data-active={index === activeIndex}
+                    className="bx-country__option"
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onClick={() => commit(country)}
+                    tabIndex={-1}
+                  >
+                    <span aria-hidden="true">{country.flag}</span>
+                    <span>{country.name}</span>
+                    <span className="bx-country__dial">{country.dialCode}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="bx-country__empty">{forms.countrySelect.empty}</p>
+          )}
         </div>
       )}
     </div>

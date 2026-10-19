@@ -1,63 +1,86 @@
-import { motion } from 'framer-motion';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import siteContent from '../content/siteContent.json';
-import { fadeUpProps } from '../utils/motion';
+import { services } from '../content/catalog';
 
-const { footer } = siteContent;
+const { footer, header, site } = siteContent;
 
 export default function SiteFooter() {
   return (
-    <motion.footer className="site-footer mt-auto" {...fadeUpProps} viewport={{ once: false, amount: 0.05 }}>
-      <div className="container py-4 py-lg-5">
-        <div className="row g-4 align-items-start footer-main-row">
-          <div className="col-lg-4">
-            <div className="footer-brand-row mb-3">
-              <NavLink to="/" className="footer-brand-link" aria-label="BloomX Home">
-                <img className="footer-brand-logo" src="/BloomX.png" alt="BloomX logo" />
-              </NavLink>
-              <div className="section-eyebrow mb-0">{footer.headline}</div>
-            </div>
-            <h4 className="footer-title mb-3">{footer.tagline}</h4>
-            <p className="footer-description mb-4">{footer.description}</p>
-            <div className="d-flex flex-wrap gap-2 mb-4">
-              {footer.highlights.map((highlight) => (
-                <span key={highlight} className="footer-chip">{highlight}</span>
-              ))}
-            </div>
-            <p className="footer-note mb-0">{footer.note}</p>
+    <footer className="bx-footer">
+      <div className="bx-blueprint" aria-hidden="true" />
+      <div className="bx-shell bx-shell--wide">
+        <div className="bx-footer__grid">
+          <div className="bx-footer__brand">
+            <Link to="/" className="bx-brand" aria-label={`${site.name} — home`}>
+              <img
+                className="bx-brand__mark"
+                src="/logo-mark.png"
+                width="96"
+                height="96"
+                alt={header.brandAlt}
+                loading="lazy"
+              />
+              <span className="bx-brand__name">
+                <span className="bx-brand__word">BloomX</span>
+                <span className="bx-brand__sub">Technologies</span>
+              </span>
+            </Link>
+            <p className="bx-footer__statement">{footer.statement}</p>
+            <p className="bx-eyebrow bx-eyebrow--plain bx-eyebrow--on-dark">{site.tagline}</p>
           </div>
 
-          <div className="col-sm-6 col-lg-3">
-            <h6 className="footer-heading">{footer.headings.services}</h6>
-            <ul className="footer-list">
-              {footer.services.map((service) => (
-                <li key={service}>{service}</li>
+          <div>
+            <h2 className="bx-footer__heading">{footer.headings.services}</h2>
+            <ul className="bx-footer__list">
+              {services.map((service) => (
+                <li key={service.slug}>
+                  <Link to={`/services#${service.slug}`}>{service.title}</Link>
+                </li>
               ))}
             </ul>
           </div>
 
-          <div className="col-sm-6 col-lg-5">
-            <h6 className="footer-heading">{footer.headings.contact}</h6>
-            <ul className="footer-list footer-contact-list">
-              <li><span>{footer.labels.email}</span><a href={`mailto:${footer.contact.email}`}>{footer.contact.email}</a></li>
-              <li><span>{footer.labels.phone}</span><a href={`tel:${footer.contact.phone.replace(/[^+\d]/g, '')}`}>{footer.contact.phone}</a></li>
-              <li><span>{footer.labels.location}</span><span>{footer.contact.location}</span></li>
+          <div>
+            <h2 className="bx-footer__heading">{footer.headings.site}</h2>
+            <ul className="bx-footer__list">
+              {header.nav.map((item) => (
+                <li key={item.to}>
+                  <Link to={item.to}>{item.label}</Link>
+                </li>
+              ))}
             </ul>
-            <div className="footer-links mt-4">
-              <NavLink className={({ isActive }) => isActive ? 'footer-link footer-link-active' : 'footer-link'} to="/services">{footer.links.services}</NavLink>
-              <NavLink className={({ isActive }) => isActive ? 'footer-link footer-link-active' : 'footer-link'} to="/contact">{footer.links.contact}</NavLink>
-            </div>
+          </div>
+
+          <div>
+            <h2 className="bx-footer__heading">{footer.headings.contact}</h2>
+            <ul className="bx-footer__list">
+              <li className="bx-footer__contact-item">
+                <span className="bx-footer__contact-label">{footer.labels.email}</span>
+                <a href={`mailto:${footer.contact.email}`}>{footer.contact.email}</a>
+              </li>
+              <li className="bx-footer__contact-item">
+                <span className="bx-footer__contact-label">{footer.labels.phone}</span>
+                <a href={`tel:${footer.contact.phone.replace(/[^+\d]/g, '')}`}>{footer.contact.phone}</a>
+              </li>
+              <li className="bx-footer__contact-item">
+                <span className="bx-footer__contact-label">{footer.labels.location}</span>
+                <span>{footer.contact.location}</span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div className="footer-bottom mt-4 pt-4 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
-          <p className="mb-0 footer-copy">{footer.copy}</p>
-          <div className="footer-mini-links d-flex flex-wrap gap-3">
-            <NavLink className={({ isActive }) => isActive ? 'footer-link footer-link-small footer-link-active' : 'footer-link footer-link-small'} to="/services">{footer.links.services}</NavLink>
-            <NavLink className={({ isActive }) => isActive ? 'footer-link footer-link-small footer-link-active' : 'footer-link footer-link-small'} to="/contact">{footer.links.contact}</NavLink>
-          </div>
+        <div className="bx-footer__bottom">
+          <p>{footer.copy}</p>
+          <nav className="bx-footer__bottom-links" aria-label="Footer">
+            {footer.bottomLinks.map((item) => (
+              <Link key={item.to} to={item.to}>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   );
 }
