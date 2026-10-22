@@ -29,3 +29,10 @@ Thumbs.db
 *.tmp
 *.temp
 node_modules/
+
+# Generated SEO files — written by client/scripts/generate-seo.mjs from
+# VITE_SITE_URL at build time and copied into dist/ by Vite. Keeping them
+# out of git stops the deployed domain being duplicated into source, and
+# stops the daily <lastmod> churning every diff.
+client/public/robots.txt
+client/public/sitemap.xml

@@ -74,55 +74,68 @@ if (origin) {
 }
 
 /* -------------------------------------------------------------------------
-   Content-Security-Policy
+   Content-Security-Policy — VERIFY, never write
    -------------------------------------------------------------------------
-   index.html carries one inline <script> (the hero image preload). Rather
-   than weaken the policy with 'unsafe-inline', its SHA-256 is computed here
-   and written into vercel.json, so the policy stays strict and can never
-   drift out of sync with the file: this runs on every build.
+   Vercel parses vercel.json from the source tree *before* it runs the
+   build, so rewriting the file here does nothing: the headers Vercel
+   serves are whatever is committed. The policy therefore lives in
+   vercel.json under version control, and this step's only job is to fail
+   the build if that committed policy has gone stale — a changed inline
+   script, or an API origin that no longer matches VITE_API_BASE_URL.
+
+   Getting this wrong is silent and total: the site loads perfectly and
+   every API call is blocked before it leaves the browser, so nothing even
+   appears in the network tab.
    ------------------------------------------------------------------------- */
 
 const indexHtml = readFileSync(resolve(here, '..', 'index.html'), 'utf8');
 const inlineScripts = [...indexHtml.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map(
   (m) => m[1]
 );
-const scriptHashes = inlineScripts.map(
+const expectedHashes = inlineScripts.map(
   (body) => `'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`
 );
 
-const csp = [
-  "default-src 'self'",
-  `script-src 'self' ${scriptHashes.join(' ')}`.trim(),
-  // Google Fonts ships its CSS from a stylesheet link, which needs the host
-  // allowed; 'unsafe-inline' covers the style attributes Framer Motion sets
-  // on elements as it animates them.
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com",
-  "img-src 'self' data: https://images.unsplash.com",
-  // Where the browser may send form submissions / XHR. Add the API origin
-  // here if it is ever hosted somewhere other than this site.
-  `connect-src 'self'${process.env.VITE_API_BASE_URL ? ' ' + new URL(process.env.VITE_API_BASE_URL).origin : ''}`,
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "object-src 'none'",
-  'upgrade-insecure-requests'
-].join('; ');
-
-const SECURITY_HEADERS = [
-  { key: 'Content-Security-Policy', value: csp },
-  { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'X-Frame-Options', value: 'DENY' },
-  { key: 'Permissions-Policy', value: 'geolocation=(), microphone=(), camera=(), interest-cohort=()' },
-  { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' }
-];
-
 const vercelPath = resolve(here, '..', 'vercel.json');
 const vercelConfig = JSON.parse(readFileSync(vercelPath, 'utf8'));
-vercelConfig.headers = [{ source: '/(.*)', headers: SECURITY_HEADERS }];
-writeFileSync(vercelPath, `${JSON.stringify(vercelConfig, null, 2)}\n`);
+const cspHeader = vercelConfig.headers?.[0]?.headers?.find(
+  (h) => h.key === 'Content-Security-Policy'
+)?.value;
+
+const problems = [];
+
+if (!cspHeader) {
+  problems.push('vercel.json has no Content-Security-Policy header.');
+} else {
+  for (const hash of expectedHashes) {
+    if (!cspHeader.includes(hash)) {
+      problems.push(
+        `script-src is missing the hash for an inline script in index.html.\n` +
+          `      expected: ${hash}\n` +
+          `      Add it to script-src in vercel.json.`
+      );
+    }
+  }
+
+  const apiBase = (process.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '');
+  if (apiBase) {
+    const apiOrigin = new URL(apiBase).origin;
+    if (!cspHeader.includes(apiOrigin)) {
+      problems.push(
+        `connect-src does not allow ${apiOrigin}, so every API call will be\n` +
+          `      blocked by the browser. Add it to connect-src in vercel.json.`
+      );
+    }
+  }
+}
+
+if (problems.length) {
+  console.error('\n[csp] vercel.json is out of date:\n');
+  problems.forEach((p) => console.error(`  - ${p}`));
+  console.error('');
+  process.exit(1);
+}
 
 console.log(
-  `[seo] wrote security headers to vercel.json (${scriptHashes.length} inline script hash(es) in CSP)`
+  `[csp] vercel.json verified (${expectedHashes.length} inline script hash(es), connect-src checked)`
 );
