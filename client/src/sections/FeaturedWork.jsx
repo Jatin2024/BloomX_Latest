@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { staggerDelay } from '../utils/motion';
 import Section, { Reveal } from '../components/ui/Section';
-import { ArrowLink, SectionHeading, Tags } from '../components/ui/Primitives';
+import Media from '../components/ui/Media';
+import { ArrowLink, MetaLine, SectionHeading } from '../components/ui/Primitives';
 import siteContent from '../content/siteContent.json';
 import { projects } from '../content/catalog';
 import { buildImage, media } from '../content/media';
@@ -14,7 +16,7 @@ export default function FeaturedWork() {
   return (
     <Section aria-labelledby="work-title">
       <SectionHeading
-        split
+        variant="stacked"
         eyebrow={copy.eyebrow}
         title={copy.title}
         text={copy.text}
@@ -27,23 +29,22 @@ export default function FeaturedWork() {
           const image = buildImage(media[project.mediaKey], {
             ratio: isFeature ? [16, 9] : [16, 10],
             sizes: isFeature ? FEATURE_SIZES : COMPACT_SIZES,
-            widths: [480, 768, 1024, 1440]
+            widths: [480, 768, 1024, 1440],
+            desaturate: true
           });
 
           return (
             <Reveal
               key={project.slug}
-              delay={index * 0.07}
+              delay={staggerDelay(index)}
               y={18}
               className={`bx-work-cell${isFeature ? ' bx-work-cell--feature' : ''}`}
             >
               <Link
-                to="/work"
+                to={`/work#${project.slug}`}
                 className={`bx-work-card${isFeature ? ' bx-work-card--feature' : ''}`}
               >
-                <figure className="bx-figure bx-figure--zoom bx-work-card__figure">
-                  <img {...image} />
-                </figure>
+                <Media image={image} className="bx-work-card__figure" duotone />
 
                 <div className="bx-work-card__body">
                   <p className="bx-work-card__kicker">
@@ -52,7 +53,7 @@ export default function FeaturedWork() {
                   </p>
                   <h3 className="bx-work-card__title">{project.name}</h3>
                   <p className="bx-work-card__text">{project.summary}</p>
-                  <Tags items={project.scope} />
+                  <MetaLine items={project.scope} />
                 </div>
               </Link>
             </Reveal>

@@ -1,5 +1,5 @@
 import { AnimatePresence, m } from 'framer-motion';
-import { easing } from '../../utils/motion';
+import { duration, ease } from '../../utils/motion';
 
 /* -------------------------------------------------------------------------
    Form building blocks shared by the enquiry and application forms.
@@ -48,7 +48,7 @@ export function Field({ id, label, required = false, error, hint, children, clas
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.18, ease: easing }}
+            transition={{ duration: duration.fast, ease: ease.ui }}
           >
             <WarnIcon />
             {error}
@@ -94,7 +94,7 @@ export function FormToast({ status, type = 'success', onDismiss }) {
             initial={{ opacity: 0, y: -14, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
-            transition={{ duration: 0.26, ease: easing }}
+            transition={{ duration: duration.base, ease: ease.entrance }}
           >
             <span className="bx-toast__icon" aria-hidden="true">
               {type === 'error' ? <WarnIcon /> : <TickIcon />}

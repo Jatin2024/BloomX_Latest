@@ -1,7 +1,16 @@
 import { Link } from 'react-router-dom';
+import { stagger } from '../utils/motion';
 import PageHero from '../components/ui/PageHero';
 import Section, { Reveal } from '../components/ui/Section';
-import { ArrowIcon, CheckIcon, Eyebrow, SectionHeading, Tags } from '../components/ui/Primitives';
+import Media from '../components/ui/Media';
+import {
+  ArrowIcon,
+  CheckIcon,
+  DefList,
+  Eyebrow,
+  MetaLine,
+  SectionHeading
+} from '../components/ui/Primitives';
 import Approach from '../sections/Approach';
 import CtaBand from '../sections/CtaBand';
 import siteContent from '../content/siteContent.json';
@@ -32,18 +41,17 @@ export default function ServicesPage() {
           const image = buildImage(media[service.mediaKey], {
             ratio: [4, 3],
             sizes: '(min-width: 960px) 44vw, 92vw',
-            widths: [480, 720, 960, 1200]
+            widths: [480, 720, 960, 1200],
+            desaturate: true
           });
 
           return (
             <article className="bx-service" id={service.slug} key={service.slug}>
               <Reveal className="bx-service__media">
-                <figure className="bx-figure bx-figure--zoom bx-service__figure">
-                  <img {...image} />
-                </figure>
+                <Media image={image} className="bx-service__figure" duotone />
               </Reveal>
 
-              <Reveal className="bx-service__body" delay={0.06}>
+              <Reveal className="bx-service__body" delay={stagger.base}>
                 <Eyebrow>Service {String(index + 1).padStart(2, '0')}</Eyebrow>
                 <h2 className="bx-service__title">{service.title}</h2>
                 <p className="bx-lead">{service.description}</p>
@@ -62,7 +70,7 @@ export default function ServicesPage() {
 
                 <div>
                   <p className="bx-label">{copy.stackLabel}</p>
-                  <Tags items={service.stack} />
+                  <MetaLine items={service.stack} lead />
                 </div>
 
                 <div>
@@ -90,16 +98,21 @@ export default function ServicesPage() {
         }}
       />
 
-      <Section>
-        <SectionHeading split eyebrow={copy.techEyebrow} title={copy.techTitle} text={copy.techText} />
-        <div className="bx-grid bx-grid--2" style={{ marginTop: 'var(--space-10)' }}>
-          {technologyGroups.map((group, index) => (
-            <Reveal key={group.label} delay={index * 0.06} className="bx-panel bx-panel--sunken">
-              <p className="bx-label">{group.label}</p>
-              <Tags items={group.items} />
-            </Reveal>
-          ))}
-        </div>
+      <Section className="bx-section--close">
+        <SectionHeading
+          variant="stacked"
+          eyebrow={copy.techEyebrow}
+          title={copy.techTitle}
+          text={copy.techText}
+        />
+        <Reveal style={{ marginTop: 'clamp(2rem, 1.5rem + 2vw, 3.5rem)' }}>
+          <DefList
+            rows={technologyGroups.map((group) => ({
+              key: group.label,
+              value: group.items.join(' · ')
+            }))}
+          />
+        </Reveal>
       </Section>
 
       <Section tone="dark" tight>
@@ -108,9 +121,9 @@ export default function ServicesPage() {
             <Eyebrow>{copy.industryEyebrow}</Eyebrow>
             <h2>{copy.industryTitle}</h2>
           </Reveal>
-          <Reveal delay={0.08} className="bx-stack">
+          <Reveal delay={stagger.loose} className="bx-stack">
             <p className="bx-lead">{copy.industryText}</p>
-            <Tags items={industries} onDark />
+            <MetaLine items={industries} lead />
           </Reveal>
         </div>
       </Section>

@@ -1,17 +1,19 @@
 import Section, { Reveal } from '../components/ui/Section';
-import { ButtonLink, CheckIcon, Eyebrow } from '../components/ui/Primitives';
+import { staggerDelay } from '../utils/motion';
+import { ButtonLink, Eyebrow } from '../components/ui/Primitives';
 import siteContent from '../content/siteContent.json';
 import { whyPoints } from '../content/catalog';
-import { buildImage, media } from '../content/media';
 
 const copy = siteContent.home.why;
 
-const asideImage = buildImage(media.flatlayDesk, {
-  ratio: [5, 4],
-  sizes: '(min-width: 980px) 32vw, 92vw',
-  widths: [480, 720, 960]
-});
-
+/**
+ * Commitments as a numbered editorial list.
+ *
+ * Deliberately has no icons: a repeated tick next to every line carries no
+ * information and reads as decoration. The numerals do the indexing, the
+ * titles do the work, and the left column holds a statement rather than a
+ * stock photograph.
+ */
 export default function WhyBloomX() {
   return (
     <Section aria-labelledby="why-title">
@@ -21,28 +23,30 @@ export default function WhyBloomX() {
             <Eyebrow>{copy.eyebrow}</Eyebrow>
             <h2 id="why-title">{copy.title}</h2>
             <p className="bx-lead">{copy.text}</p>
-            <figure className="bx-figure bx-figure--zoom bx-why__figure">
-              <img {...asideImage} />
-            </figure>
-            <ButtonLink to="/contact" variant="ghost">
-              Start a conversation
-            </ButtonLink>
+
+            <blockquote className="bx-pullquote">
+              <p>{copy.quote}</p>
+            </blockquote>
+
+            <div>
+              <ButtonLink to="/contact" variant="ghost">
+                Start a conversation
+              </ButtonLink>
+            </div>
           </div>
         </Reveal>
 
-        <div className="bx-why__list">
+        <ol className="bx-why__list">
           {whyPoints.map((point, index) => (
-            <Reveal className="bx-why__item" key={point.title} delay={index * 0.05} y={14}>
-              <span className="bx-why__icon" aria-hidden="true">
-                <CheckIcon />
-              </span>
+            <Reveal as="li" className="bx-why__item" key={point.title} delay={staggerDelay(index)} y={14}>
+              <span className="bx-why__num">{String(index + 1).padStart(2, '0')}</span>
               <div>
                 <h3 className="bx-why__title">{point.title}</h3>
                 <p className="bx-why__text">{point.text}</p>
               </div>
             </Reveal>
           ))}
-        </div>
+        </ol>
       </div>
     </Section>
   );

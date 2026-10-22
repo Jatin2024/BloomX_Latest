@@ -1,18 +1,24 @@
 import { useEffect, useMemo, useRef } from 'react';
+import { stagger } from '../utils/motion';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import PageHero from '../components/ui/PageHero';
 import Section, { Reveal } from '../components/ui/Section';
 import { Eyebrow } from '../components/ui/Primitives';
+import EmailLink from '../components/ui/EmailLink';
 import ContactForm from '../components/ContactForm';
 import siteContent from '../content/siteContent.json';
 import { getService } from '../content/catalog';
 import useDocumentMeta from '../utils/useDocumentMeta';
+import useWarmApi from '../utils/useWarmApi';
 
 const copy = siteContent.contact;
 const { footer } = siteContent;
 
 export default function ContactPage() {
   useDocumentMeta({ ...copy.meta, path: '/contact' });
+
+  // Wake a sleeping API while the form is being filled in.
+  useWarmApi();
 
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -67,7 +73,7 @@ export default function ContactPage() {
               <div className="bx-stack bx-stack--sm">
                 <div className="bx-contact__detail">
                   <span className="bx-contact__detail-label">{footer.labels.email}</span>
-                  <a href={`mailto:${footer.contact.email}`}>{footer.contact.email}</a>
+                  <EmailLink email={footer.contact.email} subject={copy.emailSubject} />
                 </div>
                 <div className="bx-contact__detail">
                   <span className="bx-contact__detail-label">{footer.labels.phone}</span>
@@ -78,6 +84,7 @@ export default function ContactPage() {
                 <div className="bx-contact__detail">
                   <span className="bx-contact__detail-label">{footer.labels.location}</span>
                   <span>{footer.contact.location}</span>
+                  <span className="bx-contact-note">{footer.contact.locationNote}</span>
                 </div>
                 <div className="bx-contact__detail">
                   <span className="bx-contact__detail-label">{copy.responseLabel}</span>
@@ -88,7 +95,7 @@ export default function ContactPage() {
           </Reveal>
 
           <div ref={panelRef} id="enquiry">
-            <Reveal className="bx-form-panel" delay={0.08}>
+            <Reveal className="bx-form-panel" delay={stagger.loose}>
               <div className="bx-stack bx-stack--sm" style={{ marginBottom: 'var(--space-6)' }}>
                 <h2>{copy.formTitle}</h2>
                 <p className="bx-field__hint">{copy.formText}</p>

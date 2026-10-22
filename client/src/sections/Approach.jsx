@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { m, useScroll, useSpring } from 'framer-motion';
+import { staggerDelay } from '../utils/motion';
+import { m, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import Section, { Reveal } from '../components/ui/Section';
 import { SectionHeading } from '../components/ui/Primitives';
 import { processSteps } from '../content/catalog';
@@ -8,14 +9,21 @@ import { processSteps } from '../content/catalog';
  * The one scroll-linked effect on the site: the timeline rule fills as the
  * section passes through the viewport. It is purely decorative — the steps
  * themselves are plain, readable content underneath.
+ *
+ * MotionConfig's reducedMotion setting does not reach scroll-driven motion
+ * values, so this opts out explicitly: with reduced motion the rule is
+ * simply drawn complete and never moves.
  */
 export default function Approach({ copy, tone = 'dark', id }) {
   const trackRef = useRef(null);
+  const prefersReducedMotion = useReducedMotion();
+
   const { scrollYProgress } = useScroll({
     target: trackRef,
     offset: ['start 80%', 'end 55%']
   });
-  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 22, mass: 0.4 });
+  const smoothed = useSpring(scrollYProgress, { stiffness: 90, damping: 22, mass: 0.4 });
+  const progress = prefersReducedMotion ? 1 : smoothed;
 
   const isDark = tone === 'dark';
 
@@ -46,7 +54,7 @@ export default function Approach({ copy, tone = 'dark', id }) {
         </div>
 
         {processSteps.map((step, index) => (
-          <Reveal className="bx-step" key={step.title} delay={index * 0.06} y={16}>
+          <Reveal className="bx-step" key={step.title} delay={staggerDelay(index)} y={16}>
             <span className="bx-step__node" aria-hidden="true" />
             <span className="bx-step__index">Step {String(index + 1).padStart(2, '0')}</span>
             <h3 className="bx-step__title">{step.title}</h3>

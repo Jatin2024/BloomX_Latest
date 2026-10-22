@@ -1,7 +1,7 @@
 import { m } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import siteContent from '../content/siteContent.json';
-import { buildApiUrl } from '../utils/api';
+import { buildApiUrl, readApiResponse } from '../utils/api';
 import { fadeUpProps } from '../utils/motion';
 import { hasSuspiciousInput, sanitizeInput } from '../utils/inputSecurity';
 import { validatePhoneNumber } from '../utils/phoneValidation';
@@ -116,12 +116,13 @@ export default function JobApplicationForm({ positions = [], selectedPosition = 
 
     try {
       const response = await fetch(buildApiUrl('/apply'), { method: 'POST', body: formData });
-      const data = await response.json().catch(() => ({}));
+      // Success requires a 2xx *and* a JSON body — see readApiResponse.
+      const { ok, message } = await readApiResponse(response);
 
-      setStatusType(response.ok ? 'success' : 'error');
-      setStatus(data.message || messages.requestFailed);
+      setStatusType(ok ? 'success' : 'error');
+      setStatus(message || (ok ? messages.success : messages.requestFailed));
 
-      if (response.ok) {
+      if (ok) {
         setValues(EMPTY);
         setCountryCode('IN');
         setPosition(selectedPosition || positions[0] || '');

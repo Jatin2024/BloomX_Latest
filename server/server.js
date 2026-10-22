@@ -35,6 +35,70 @@ const ALLOWED_RESUME_MIME = new Set([
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ]);
 
+/**
+ * Leading bytes each accepted resume type must actually start with.
+ *
+ * The multipart Content-Type is supplied by the client and can claim
+ * anything, so the declared MIME is checked against the real file signature
+ * before the bytes are stored or ever served back.
+ */
+const RESUME_SIGNATURES = {
+  'application/pdf': [[0x25, 0x50, 0x44, 0x46, 0x2d]], // %PDF-
+  'application/msword': [[0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]], // OLE2 compound file
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [
+    [0x50, 0x4b, 0x03, 0x04], // PK.. — docx is a zip container
+    [0x50, 0x4b, 0x05, 0x06],
+    [0x50, 0x4b, 0x07, 0x08]
+  ]
+};
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/** Rejects a value that is not a plain string — blocks object/array payloads
+ *  such as `{"$ne": null}` reaching query or document construction. */
+function isPlainString(value) {
+  return typeof value === 'string';
+}
+
+function matchesSignature(buffer, mimetype) {
+  const signatures = RESUME_SIGNATURES[mimetype];
+  if (!signatures || !Buffer.isBuffer(buffer)) {
+    return false;
+  }
+
+  return signatures.some(
+    (sig) => buffer.length >= sig.length && sig.every((byte, index) => buffer[index] === byte)
+  );
+}
+
+/** Timing-safe string comparison — a plain `!==` leaks length and position
+ *  information through response timing when comparing secrets. */
+function safeEqual(a, b) {
+  const left = Buffer.from(String(a ?? ''), 'utf8');
+  const right = Buffer.from(String(b ?? ''), 'utf8');
+
+  if (left.length !== right.length) {
+    // Still compare, so the failure cost does not depend on length.
+    crypto.timingSafeEqual(left, left);
+    return false;
+  }
+
+  return crypto.timingSafeEqual(left, right);
+}
+
+/** Strips anything that could break out of a quoted Content-Disposition
+ *  filename, and supplies an RFC 5987 form for non-ASCII names. */
+function contentDispositionFilename(name) {
+  const fallback = String(name || 'resume')
+    .replace(/[\r\n"\\]/g, '')
+    .replace(/[^\x20-\x7e]/g, '_')
+    .slice(0, 180)
+    .trim() || 'resume';
+
+  const encoded = encodeURIComponent(String(name || 'resume').slice(0, 180));
+  return `attachment; filename="${fallback}"; filename*=UTF-8''${encoded}`;
+}
+
 let mongoStatus = MONGO_URI ? 'disconnected' : 'disabled';
 
 if (RAW_MONGO_URI && !MONGO_URI) {
@@ -61,10 +125,67 @@ const corsOptions = CORS_ALLOWED_ORIGINS.length
 
 if (CORS_ALLOWED_ORIGINS.length) {
   console.log(`CORS allowlist enabled for origins: ${CORS_ALLOWED_ORIGINS.join(', ')}`);
+} else {
+  console.warn(
+    'WARNING: CORS_ALLOWED_ORIGINS is not set — every origin is reflected. ' +
+      'Set it to the deployed site origin before going to production.'
+  );
 }
 
+if (!ADMIN_API_KEY) {
+  console.warn(
+    'WARNING: ADMIN_API_KEY is not set — the admin endpoints and signed resume ' +
+      'downloads are disabled until it is configured.'
+  );
+}
+
+// Do not advertise the framework and version to scanners.
+app.disable('x-powered-by');
+
+/*
+ * Rate limiting keys on req.ip. Behind a proxy (Vercel, nginx, a load
+ * balancer) every request arrives from the proxy address, so without this
+ * the whole internet shares one bucket. Enabling it makes Express trust
+ * X-Forwarded-For, which a direct client can forge — so it stays opt-in and
+ * should name the hop count or the proxy's address, never a blanket `true`
+ * on a publicly reachable server.
+ *   TRUST_PROXY=1            trust one proxy hop
+ *   TRUST_PROXY=10.0.0.0/8   trust a known proxy subnet
+ */
+const TRUST_PROXY = (process.env.TRUST_PROXY || '').trim();
+if (TRUST_PROXY) {
+  const numeric = Number(TRUST_PROXY);
+  app.set('trust proxy', Number.isFinite(numeric) ? numeric : TRUST_PROXY);
+  console.log(`trust proxy enabled: ${TRUST_PROXY}`);
+}
+
+/*
+ * Baseline response headers. This process only ever returns JSON and file
+ * downloads, so the set is deliberately small — no CSP here, since the
+ * browsing context is the separately hosted front end.
+ */
+app.use((req, res, next) => {
+  // Stop browsers second-guessing the declared Content-Type, which is what
+  // turns an "image" upload into executable script.
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  // An API has no reason to be framed.
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
+  // Keep URLs out of Referer when leaving to another origin.
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-site');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), interest-cohort=()');
+  // Only meaningful once served over TLS; harmless otherwise.
+  if (req.secure || req.get('x-forwarded-proto') === 'https') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+  next();
+});
+
 app.use(cors(corsOptions));
-app.use(express.json());
+// The largest legitimate enquiry is a little over 2KB; the default 100KB is
+// far more room than any caller needs.
+app.use(express.json({ limit: '32kb' }));
 
 app.use('/api', (req, res, next) => {
   const start = Date.now();
@@ -150,23 +271,42 @@ function validateAdminApiKey(req, res, next) {
   const bearerKey = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
   const suppliedKey = headerKey || bearerKey;
 
-  if (!suppliedKey || suppliedKey !== ADMIN_API_KEY) {
+  if (!suppliedKey || !safeEqual(suppliedKey, ADMIN_API_KEY)) {
     return res.status(401).json({ message: 'Unauthorized admin access.' });
   }
 
   return next();
 }
 
+/*
+ * Resume download tokens are signed with ADMIN_API_KEY.
+ *
+ * There is deliberately no fallback secret. A hard-coded default would be
+ * readable by anyone with the source, letting them mint a valid token for
+ * any submission id and pull applicants' CVs straight out of the database —
+ * ObjectIds embed a timestamp and are far from unguessable. With no key
+ * configured, token issuing and verification are simply unavailable.
+ */
+function signingKey() {
+  return ADMIN_API_KEY || null;
+}
+
 function createSignedDownloadToken(submissionId) {
+  const key = signingKey();
+  if (!key) {
+    return null;
+  }
+
   const expiresAt = Date.now() + DOWNLOAD_LINK_TTL_MS;
   const payload = { submissionId: String(submissionId), expiresAt };
   const encodedPayload = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const signature = crypto.createHmac('sha256', ADMIN_API_KEY || 'bloomx-download-secret').update(encodedPayload).digest('hex');
+  const signature = crypto.createHmac('sha256', key).update(encodedPayload).digest('hex');
   return `${encodedPayload}.${signature}`;
 }
 
 function verifySignedDownloadToken(token) {
-  if (!token) {
+  const key = signingKey();
+  if (!key || !token) {
     return null;
   }
 
@@ -175,8 +315,8 @@ function verifySignedDownloadToken(token) {
     return null;
   }
 
-  const expectedSignature = crypto.createHmac('sha256', ADMIN_API_KEY || 'bloomx-download-secret').update(encodedPayload).digest('hex');
-  if (expectedSignature !== signature) {
+  const expectedSignature = crypto.createHmac('sha256', key).update(encodedPayload).digest('hex');
+  if (!safeEqual(expectedSignature, signature)) {
     return null;
   }
 
@@ -275,8 +415,27 @@ app.post('/api/apply', formSubmitLimiter, upload.single('resume'), async (req, r
   const { first_name, last_name, email, phone, why_hire, position } = req.body;
   const resume = req.file;
 
+  // Every field must be a string. Multipart bodies can carry repeated keys,
+  // which Express surfaces as arrays — rejecting non-strings keeps arrays and
+  // objects out of document construction entirely.
+  if (![first_name, last_name, email, phone, why_hire].every(isPlainString)) {
+    return res.status(400).json({ message: 'Invalid field format.' });
+  }
+
+  if (position !== undefined && !isPlainString(position)) {
+    return res.status(400).json({ message: 'Invalid field format.' });
+  }
+
   if (!first_name || !last_name || !email || !phone || !why_hire || !resume) {
     return res.status(400).json({ message: 'Please provide all required fields and attach your resume.' });
+  }
+
+  if (!EMAIL_PATTERN.test(email.trim()) || email.length > 140) {
+    return res.status(400).json({ message: 'Please provide a valid email address.' });
+  }
+
+  if (!/^[\d\s+()-]{6,40}$/.test(phone.trim())) {
+    return res.status(400).json({ message: 'Please provide a valid phone number.' });
   }
 
   if (
@@ -291,6 +450,13 @@ app.post('/api/apply', formSubmitLimiter, upload.single('resume'), async (req, r
 
   if (!ALLOWED_RESUME_MIME.has(resume.mimetype)) {
     return res.status(400).json({ message: 'Unsupported resume file type.' });
+  }
+
+  // The declared type is attacker-controlled; the bytes are not.
+  if (!matchesSignature(resume.buffer, resume.mimetype)) {
+    return res.status(400).json({
+      message: 'Resume contents do not match the file type. Upload a real PDF or Word document.'
+    });
   }
 
   const safeFirstName = sanitizeText(first_name, 80);
@@ -337,8 +503,22 @@ app.post('/api/apply', formSubmitLimiter, upload.single('resume'), async (req, r
 app.post('/api/enquiry', formSubmitLimiter, async (req, res) => {
   const { first_name, last_name, email, phone, message } = req.body;
 
+  // Reject non-strings before anything touches the database — this is what
+  // stops a payload like {"first_name": {"$ne": null}} getting any further.
+  if (![first_name, last_name, email, phone, message].every(isPlainString)) {
+    return res.status(400).json({ message: 'Invalid field format.' });
+  }
+
   if (!first_name || !last_name || !email || !phone || !message) {
     return res.status(400).json({ message: 'Please provide all required enquiry fields.' });
+  }
+
+  if (!EMAIL_PATTERN.test(email.trim()) || email.length > 140) {
+    return res.status(400).json({ message: 'Please provide a valid email address.' });
+  }
+
+  if (!/^[\d\s+()-]{6,40}$/.test(phone.trim())) {
+    return res.status(400).json({ message: 'Please provide a valid phone number.' });
   }
 
   if (
@@ -411,7 +591,12 @@ app.get('/api/admin/submissions', validateAdminApiKey, async (req, res) => {
             mimeType: item.resume.mimeType,
             size: item.resume.size,
             hasFile: true,
-            downloadUrl: `/api/admin/submissions/${item._id}/resume?token=${encodeURIComponent(createSignedDownloadToken(item._id))}`
+            downloadUrl: (() => {
+              const token = createSignedDownloadToken(item._id);
+              return token
+                ? `/api/admin/submissions/${item._id}/resume?token=${encodeURIComponent(token)}`
+                : null;
+            })()
           }
         : null
     }));
@@ -458,8 +643,15 @@ app.get('/api/admin/submissions/:id/resume', validateAdminOrSignedDownload, asyn
     }
 
     const downloadName = submission.resume.fileName || `resume-${id}`;
-    res.setHeader('Content-Type', submission.resume.mimeType || 'application/octet-stream');
-    res.setHeader('Content-Disposition', `attachment; filename="${downloadName}"`);
+    // Only ever hand back a type from the allowlist; never echo a stored
+    // value that could coax the browser into rendering the file inline.
+    const safeType = ALLOWED_RESUME_MIME.has(submission.resume.mimeType)
+      ? submission.resume.mimeType
+      : 'application/octet-stream';
+
+    res.setHeader('Content-Type', safeType);
+    res.setHeader('Content-Disposition', contentDispositionFilename(downloadName));
+    res.setHeader('X-Content-Type-Options', 'nosniff');
     return res.send(resumeBinary);
   } catch (err) {
     console.error(err);
@@ -468,32 +660,64 @@ app.get('/api/admin/submissions/:id/resume', validateAdminOrSignedDownload, asyn
 });
 
 function startServer(port) {
-  const server = app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+  // Bind on all interfaces: container platforms (Render, Fly, Docker) route
+  // to the container IP, so listening only on localhost is unreachable.
+  const server = app.listen(port, '0.0.0.0', () => {
+    console.log(`Server listening on port ${port}`);
   });
 
   server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.warn(`Port ${port} is busy. Trying ${port + 1}...`);
-      server.close(() => startServer(port + 1));
-    } else {
+    if (err.code !== 'EADDRINUSE') {
       console.error(err);
       process.exit(1);
     }
+
+    /*
+     * Walking to the next free port is a convenience for local development
+     * only. A hosting platform assigns the port through $PORT and health
+     * checks that exact port — drifting to another one leaves the service
+     * permanently unhealthy with no obvious cause. Fail loudly instead.
+     */
+    if (process.env.PORT) {
+      console.error(
+        `Port ${port} (from $PORT) is already in use. Refusing to bind elsewhere, ` +
+          'because the platform only routes traffic to the assigned port.'
+      );
+      process.exit(1);
+    }
+
+    console.warn(`Port ${port} is busy. Trying ${port + 1}...`);
+    server.close(() => startServer(port + 1));
   });
 }
 
 initMongoConnection().finally(() => startServer(DEFAULT_PORT));
 
 app.use((err, req, res, next) => {
-  if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({ message: 'Resume file is too large. Max size is 5MB.' });
+  if (!err) {
+    return next();
   }
 
-  if (err) {
-    console.error(err);
-    return res.status(500).json({ message: 'Unexpected server error.' });
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ message: 'Resume file is too large. Max size is 5MB.' });
+    }
+    return res.status(400).json({ message: 'Invalid file upload.' });
   }
 
-  return next();
+  // body-parser raises 413 for oversized payloads and 400 for malformed JSON.
+  // Surfacing the real status keeps those out of the 500 bucket, so genuine
+  // faults stay visible in the logs instead of being drowned by junk traffic.
+  const status = Number(err.status || err.statusCode);
+
+  if (Number.isFinite(status) && status >= 400 && status < 500) {
+    if (status === 413) {
+      return res.status(413).json({ message: 'Request body is too large.' });
+    }
+    return res.status(status).json({ message: 'Malformed request.' });
+  }
+
+  // Unexpected: log in full, but never return internals to the caller.
+  console.error(err);
+  return res.status(500).json({ message: 'Unexpected server error.' });
 });

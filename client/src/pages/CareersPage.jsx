@@ -1,23 +1,30 @@
 import { useRef, useState } from 'react';
+import { stagger, staggerDelay } from '../utils/motion';
 import PageHero from '../components/ui/PageHero';
 import Section, { Reveal } from '../components/ui/Section';
+import Media from '../components/ui/Media';
 import { ArrowIcon, CheckIcon, Eyebrow, SectionHeading, Tags } from '../components/ui/Primitives';
 import JobApplicationForm from '../components/JobApplicationForm';
 import siteContent from '../content/siteContent.json';
 import { jobOpenings } from '../content/catalog';
 import { buildImage, media } from '../content/media';
 import useDocumentMeta from '../utils/useDocumentMeta';
+import useWarmApi from '../utils/useWarmApi';
 
 const copy = siteContent.careers;
 
 const cultureImage = buildImage(media.teamSession, {
   ratio: [16, 10],
   sizes: '(min-width: 980px) 38vw, 92vw',
-  widths: [480, 720, 960]
+  widths: [480, 720, 960],
+  desaturate: true
 });
 
 export default function CareersPage() {
   useDocumentMeta({ ...copy.meta, path: '/careers' });
+
+  // Wake a sleeping API while the form is being filled in.
+  useWarmApi();
 
   const [selectedPosition, setSelectedPosition] = useState(jobOpenings[0]?.title || '');
   const formRef = useRef(null);
@@ -44,7 +51,7 @@ export default function CareersPage() {
 
         <div className="bx-rows" style={{ marginTop: 'var(--space-8)' }}>
           {jobOpenings.map((job, index) => (
-            <Reveal className="bx-role" key={job.title} delay={index * 0.06} y={14}>
+            <Reveal className="bx-role" key={job.title} delay={staggerDelay(index)} y={14}>
               <span className="bx-capability__index">{String(index + 1).padStart(2, '0')}</span>
               <h3 className="bx-role__title">{job.title}</h3>
               <p className="bx-role__text">{job.description}</p>
@@ -68,9 +75,11 @@ export default function CareersPage() {
               <p className="bx-lead">{copy.applyText}</p>
             </div>
 
-            <figure className="bx-figure bx-figure--zoom" style={{ aspectRatio: '16 / 10', borderRadius: 'var(--r-md)' }}>
-              <img {...cultureImage} />
-            </figure>
+            <Media
+              image={cultureImage}
+              duotone
+              style={{ aspectRatio: '16 / 10', borderRadius: 'var(--r-md)' }}
+            />
 
             <div>
               <h3 className="bx-label">{copy.whyTitle}</h3>
@@ -86,7 +95,7 @@ export default function CareersPage() {
           </Reveal>
 
           <div ref={formRef}>
-            <Reveal className="bx-form-panel" delay={0.08}>
+            <Reveal className="bx-form-panel" delay={stagger.loose}>
               <JobApplicationForm
                 positions={jobOpenings.map((job) => job.title)}
                 selectedPosition={selectedPosition}

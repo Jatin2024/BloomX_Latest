@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
+import { staggerDelay } from '../utils/motion';
 import Section, { Reveal } from '../components/ui/Section';
-import { ArrowIcon, SectionHeading, Tags } from '../components/ui/Primitives';
+import { MetaLine, SectionHeading } from '../components/ui/Primitives';
 import siteContent from '../content/siteContent.json';
 import { services } from '../content/catalog';
 
@@ -12,7 +13,7 @@ const copy = siteContent.home.services;
  */
 export default function CapabilityIndex() {
   return (
-    <Section tone="sunken" aria-labelledby="capabilities-title">
+    <Section tone="sunken" className="bx-section--close" aria-labelledby="capabilities-title">
       <SectionHeading
         split
         eyebrow={copy.eyebrow}
@@ -21,23 +22,23 @@ export default function CapabilityIndex() {
         className="bx-stack"
       />
 
-      <div className="bx-rows" style={{ marginTop: 'var(--space-10)' }}>
+      <div className="bx-rows bx-rows--index">
         {services.map((service, index) => (
-          <Reveal key={service.slug} delay={Math.min(index * 0.05, 0.25)} y={16}>
+          <Reveal key={service.slug} delay={staggerDelay(index)} y={16}>
             <Link className="bx-capability" to={`/services#${service.slug}`}>
               <span className="bx-capability__index">{String(index + 1).padStart(2, '0')}</span>
 
-              <h3 className="bx-capability__title">{service.title}</h3>
+              <h3 className="bx-capability__title">
+                {service.title}
+                <span className="bx-capability__caret" aria-hidden="true">
+                  →
+                </span>
+              </h3>
 
-              <div>
+              <div className="bx-capability__detail">
                 <p className="bx-capability__text">{service.summary}</p>
-                <Tags items={service.indexTags} className="bx-capability__meta" />
+                <MetaLine items={service.indexTags} />
               </div>
-
-              <span className="bx-capability__go" aria-hidden="true">
-                <ArrowIcon />
-              </span>
-              <span className="bx-capability__mobile-cta">{copy.cta}</span>
             </Link>
           </Reveal>
         ))}

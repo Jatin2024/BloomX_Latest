@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
+import { stagger } from '../utils/motion';
 import PageHero from '../components/ui/PageHero';
 import Section, { Reveal } from '../components/ui/Section';
-import { ArrowIcon, Eyebrow, Tags } from '../components/ui/Primitives';
+import Media from '../components/ui/Media';
+import { ArrowIcon, Eyebrow, MetaLine } from '../components/ui/Primitives';
 import CtaBand from '../sections/CtaBand';
 import siteContent from '../content/siteContent.json';
 import { projects } from '../content/catalog';
@@ -27,18 +29,17 @@ export default function WorkPage() {
           const image = buildImage(media[project.mediaKey], {
             ratio: [16, 11],
             sizes: '(min-width: 960px) 52vw, 92vw',
-            widths: [480, 768, 1024, 1440]
+            widths: [480, 768, 1024, 1440],
+            desaturate: true
           });
 
           return (
-            <article className="bx-work-row" key={project.slug}>
+            <article className="bx-work-row" id={project.slug} key={project.slug}>
               <Reveal className="bx-work-row__media">
-                <figure className="bx-figure bx-figure--zoom bx-work-row__figure">
-                  <img {...image} />
-                </figure>
+                <Media image={image} className="bx-work-row__figure" duotone />
               </Reveal>
 
-              <Reveal className="bx-work-row__body" delay={0.06}>
+              <Reveal className="bx-work-row__body" delay={stagger.base}>
                 <Eyebrow>{String(index + 1).padStart(2, '0')} — {project.kind}</Eyebrow>
                 <h2>{project.name}</h2>
                 <p className="bx-lead">{project.summary}</p>
@@ -55,7 +56,7 @@ export default function WorkPage() {
                   <div className="bx-spec__item">
                     <span className="bx-spec__key">{copy.stackLabel}</span>
                     <span className="bx-spec__value">
-                      <Tags items={project.stack} />
+                      <MetaLine items={project.stack} />
                     </span>
                   </div>
                 </div>

@@ -26,11 +26,11 @@
   text-align: center;
   cursor: pointer;
   transition:
-    background-color var(--dur-2) var(--ease-out),
-    border-color var(--dur-2) var(--ease-out),
-    color var(--dur-2) var(--ease-out),
-    transform var(--dur-2) var(--ease-out),
-    box-shadow var(--dur-2) var(--ease-out);
+    background-color var(--dur-fast) var(--ease-ui),
+    border-color var(--dur-fast) var(--ease-ui),
+    color var(--dur-fast) var(--ease-ui),
+    transform var(--dur-fast) var(--ease-ui),
+    box-shadow var(--dur-fast) var(--ease-ui);
 }
 
 .bx-btn:hover {
@@ -142,7 +142,7 @@
 }
 
 .bx-arrow-link__icon {
-  transition: transform var(--dur-2) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-ui);
 }
 
 .bx-arrow-link:hover .bx-arrow-link__icon,
@@ -234,7 +234,7 @@ a:hover > .bx-arrow-link .bx-arrow-link__icon {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform var(--dur-4) var(--ease-out);
+  transition: transform var(--dur-slower) var(--ease-entrance);
 }
 
 .bx-figure--zoom:hover img,
@@ -243,16 +243,44 @@ a:hover .bx-figure--zoom img,
   transform: scale(1.045);
 }
 
-/* Navy duotone treatment keeps photography inside the brand palette. */
-.bx-figure--tinted::after {
+/* Navy duotone.
+   Every photograph on the site except the hero runs through this, which is
+   what turns a set of stock images into one art-directed set: the picture is
+   desaturated, then re-tinted with the brand navy and lifted with signature
+   blue. The hero stays in full colour so it reads as the single focal image. */
+/* Shadows are pushed down and contrast raised first, so the colour blend
+   lands on navy rather than a milky mid-blue. */
+.bx-figure--duotone img {
+  filter: grayscale(1) contrast(1.24) brightness(0.8);
+}
+
+.bx-figure--duotone::before {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(11, 31, 56, 0.16) 0%, rgba(11, 31, 56, 0.78) 100%),
-    linear-gradient(135deg, rgba(63, 114, 175, 0.4) 0%, rgba(17, 45, 78, 0.5) 100%);
+  z-index: 1;
+  background: linear-gradient(165deg, #5b8cc4 0%, #112d4e 100%);
+  mix-blend-mode: color;
+  pointer-events: none;
+}
+
+.bx-figure--duotone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(170deg, rgba(27, 60, 99, 0.3) 0%, rgba(7, 21, 42, 0.55) 100%);
   mix-blend-mode: multiply;
   pointer-events: none;
+}
+
+/* Duotone + scrim together: the scrim gradient wins at the foot of the
+   frame so overlaid captions stay readable. */
+.bx-figure--duotone.bx-figure--scrim::after {
+  mix-blend-mode: normal;
+  background:
+    linear-gradient(170deg, rgba(27, 60, 99, 0.2) 0%, rgba(7, 21, 42, 0.38) 45%),
+    linear-gradient(180deg, rgba(7, 21, 42, 0) 40%, rgba(7, 21, 42, 0.9) 100%);
 }
 
 .bx-figure--scrim::after {
@@ -261,6 +289,84 @@ a:hover .bx-figure--zoom img,
   inset: 0;
   background: linear-gradient(180deg, rgba(11, 31, 56, 0) 38%, rgba(7, 21, 42, 0.86) 100%);
   pointer-events: none;
+}
+
+/* ---- Loading skeleton ------------------------------------------------------
+   Sits above the duotone overlays and any caption so the frame reads as one
+   solid placeholder, then fades out once the photograph has decoded. */
+
+.bx-skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity var(--dur-base) var(--ease-exit);
+}
+
+.bx-skeleton--light {
+  background: var(--mist);
+}
+
+.bx-skeleton--dark {
+  background: #0e2440;
+}
+
+/* The moving highlight is a child layer translated across the frame, so the
+   browser composites it instead of repainting a gradient every frame. */
+.bx-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  animation: bx-shimmer 1.5s linear infinite;
+  will-change: transform;
+}
+
+.bx-skeleton--light::after {
+  background: linear-gradient(90deg, transparent, #eff3f9, transparent);
+}
+
+.bx-skeleton--dark::after {
+  background: linear-gradient(90deg, transparent, #1b3c63, transparent);
+}
+
+@keyframes bx-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.bx-figure[data-loaded='true'] .bx-skeleton {
+  opacity: 0;
+}
+
+/* Stop the loop once the frame has resolved — a hidden element still
+   burns frames if its animation keeps running. */
+.bx-figure[data-loaded='true'] .bx-skeleton::after {
+  animation: none;
+}
+
+/* The photograph fades in behind the skeleton. Keyed off `data-loaded`
+   being explicitly 'false', so an image rendered without this component —
+   or with JS unavailable — is visible by default and can never be
+   stranded invisible. */
+.bx-figure[data-loaded='false'] img {
+  opacity: 0;
+}
+
+.bx-figure[data-loaded] img {
+  transition:
+    opacity var(--dur-base) var(--ease-entrance),
+    transform var(--dur-slower) var(--ease-entrance);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bx-skeleton::after {
+    animation: none;
+    transform: none;
+    opacity: 0.5;
+  }
 }
 
 .bx-figure__caption {
@@ -311,7 +417,7 @@ a:hover .bx-figure--zoom img,
   font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   color: var(--text-soft);
-  transition: color var(--dur-2) var(--ease-out);
+  transition: color var(--dur-fast) var(--ease-ui);
 }
 
 /* ---- Form system ---------------------------------------------------------- */
@@ -358,9 +464,9 @@ a:hover .bx-figure--zoom img,
   color: var(--text);
   font-size: var(--fs-sm);
   transition:
-    border-color var(--dur-2) var(--ease-out),
-    box-shadow var(--dur-2) var(--ease-out),
-    background-color var(--dur-2) var(--ease-out);
+    border-color var(--dur-fast) var(--ease-ui),
+    box-shadow var(--dur-fast) var(--ease-ui),
+    background-color var(--dur-fast) var(--ease-ui);
 }
 
 .bx-textarea {
@@ -381,7 +487,7 @@ a:hover .bx-figure--zoom img,
 
 .bx-input::placeholder,
 .bx-textarea::placeholder {
-  color: var(--ink-300);
+  color: var(--text-soft);
 }
 
 .bx-input:focus,
@@ -429,7 +535,7 @@ a:hover .bx-figure--zoom img,
   color: var(--text-muted);
   font-size: var(--fs-xs);
   cursor: pointer;
-  transition: border-color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-ui), background-color var(--dur-fast) var(--ease-ui);
 }
 
 .bx-file-input::file-selector-button {
@@ -442,7 +548,7 @@ a:hover .bx-figure--zoom img,
   font-size: var(--fs-xs);
   font-weight: 650;
   cursor: pointer;
-  transition: border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-ui), color var(--dur-fast) var(--ease-ui);
 }
 
 .bx-file-input:hover,
@@ -496,7 +602,7 @@ a:hover .bx-figure--zoom img,
   font-size: var(--fs-sm);
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-ui), box-shadow var(--dur-fast) var(--ease-ui);
 }
 
 .bx-country__trigger:hover {
@@ -511,7 +617,7 @@ a:hover .bx-figure--zoom img,
 .bx-country__chevron {
   flex: none;
   opacity: 0.6;
-  transition: transform var(--dur-2) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-ui);
 }
 
 .bx-country__trigger[aria-expanded='true'] .bx-country__chevron {
@@ -639,7 +745,7 @@ a:hover .bx-figure--zoom img,
   color: inherit;
   opacity: 0.6;
   cursor: pointer;
-  transition: opacity var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+  transition: opacity var(--dur-fast) var(--ease-ui), background-color var(--dur-fast) var(--ease-ui);
 }
 
 .bx-toast__close:hover {
@@ -659,6 +765,85 @@ a:hover .bx-figure--zoom img,
   background: var(--line-dark);
 }
 
+/* Meta line — a mono run of terms separated by middots. Replaces pill
+   clusters wherever the terms are reference information rather than
+   interactive filters; reads as a caption instead of as UI. */
+.bx-meta {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  line-height: 1.9;
+}
+
+.bx-meta__sep {
+  color: var(--accent);
+  padding-inline: 0.15rem;
+}
+
+.bx-section--dark .bx-meta {
+  color: var(--text-on-dark-soft);
+}
+
+.bx-meta--lead {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.bx-section--dark .bx-meta--lead {
+  color: var(--text-on-dark-muted);
+}
+
+/* Key/value reference rows (technology groups, project specs). */
+.bx-deflist {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+
+.bx-section--dark .bx-deflist {
+  border-top-color: var(--line-dark);
+}
+
+.bx-deflist__row {
+  display: grid;
+  gap: 0.375rem 2rem;
+  padding-block: clamp(1rem, 0.8rem + 0.7vw, 1.5rem);
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+}
+
+.bx-section--dark .bx-deflist__row {
+  border-bottom-color: var(--line-dark);
+}
+
+@media (min-width: 720px) {
+  .bx-deflist__row {
+    grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+  }
+}
+
+.bx-deflist__key {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.bx-section--dark .bx-deflist__key {
+  color: var(--accent-on-dark);
+}
+
+.bx-deflist__value {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.bx-section--dark .bx-deflist__value {
+  color: var(--text-on-dark-muted);
+}
+
 /* Small uppercase label used above lists and groups. */
 .bx-label {
   font-family: var(--font-mono);
@@ -676,4 +861,96 @@ a:hover .bx-figure--zoom img,
   align-items: flex-start;
   font-size: var(--fs-xs);
   color: var(--text-soft);
+}
+
+/* Secondary line under a contact value — carries the qualifier ("working
+   with clients worldwide") without letting it compete with the fact above
+   it. Keeps the remote-first row the same visual weight as email and
+   phone instead of wrapping into a long orphaned sentence. */
+.bx-contact-note {
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--text-soft);
+  font-weight: 400;
+}
+
+.bx-footer .bx-contact-note {
+  color: var(--text-on-dark-soft);
+}
+
+/* ---- Email with copy fallback ---------------------------------------------
+   A bare mailto is inert on machines with no registered mail handler, so the
+   address is always copyable as well. The copy control is quiet until
+   hovered or focused so it never competes with the address itself. */
+
+.bx-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.bx-email__address {
+  overflow-wrap: anywhere;
+  /* Matches the ~34px hit area used by every other standalone link. */
+  display: inline-block;
+  padding-block: 0.3125rem;
+  min-height: 2.125rem;
+}
+
+.bx-email__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.375rem 0.625rem;
+  min-height: 2.125rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-ui),
+    color var(--dur-fast) var(--ease-ui),
+    background-color var(--dur-fast) var(--ease-ui);
+}
+
+.bx-email__copy:hover,
+.bx-email__copy:focus-visible {
+  border-color: var(--blue-400);
+  color: var(--accent);
+  background: var(--blue-100);
+}
+
+.bx-email__copy svg {
+  flex: none;
+}
+
+.bx-email--on-dark .bx-email__copy {
+  border-color: var(--line-dark);
+  color: var(--text-on-dark-soft);
+}
+
+.bx-email--on-dark .bx-email__copy:hover,
+.bx-email--on-dark .bx-email__copy:focus-visible {
+  border-color: rgba(219, 226, 239, 0.4);
+  color: var(--text-on-dark);
+  background: rgba(219, 226, 239, 0.08);
+}
+
+/* The label is decoration next to the icon on narrow screens. */
+@media (max-width: 479.98px) {
+  .bx-email__copy-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
 }

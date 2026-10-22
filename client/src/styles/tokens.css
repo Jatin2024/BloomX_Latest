@@ -18,7 +18,7 @@
   --ink-700: #1b3c63;
   --ink-600: #2c5080;
   --ink-500: #40587a;
-  --ink-400: #647896;
+  --ink-400: #5a6f91;
   --ink-300: #93a4bd;
   --ink-200: #c3cedf;
 
@@ -55,10 +55,15 @@
   --text-soft: var(--ink-400);
   --text-on-dark: #eaf1fa;
   --text-on-dark-muted: rgba(219, 226, 239, 0.7);
-  --text-on-dark-soft: rgba(219, 226, 239, 0.5);
+  --text-on-dark-soft: rgba(219, 226, 239, 0.58);
 
-  --accent: var(--blue-500);
-  --accent-hover: var(--blue-600);
+  /* Accent drives text only (links, eyebrows, indices, quiet buttons). It is
+     a step darker than the brand blue so small type clears WCAG AA 4.5:1 on
+     every light surface — #3F72AF measures 4.50:1 on the sunken band, which
+     is on the line. Fills and borders still use --blue-500 directly, so the
+     brand blue itself is unchanged wherever it covers area. */
+  --accent: var(--blue-600);
+  --accent-hover: var(--blue-700);
   --accent-on-dark: var(--blue-400);
 
   --danger: #b4303a;
@@ -141,13 +146,25 @@
   --shadow-lg: 0 34px 70px -34px rgba(11, 31, 56, 0.48);
   --shadow-focus: 0 0 0 3px rgba(63, 114, 175, 0.28);
 
-  /* ---- Motion ----------------------------------------------------------- */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-1: 120ms;
-  --dur-2: 220ms;
-  --dur-3: 380ms;
-  --dur-4: 620ms;
+  /* ---- Motion -------------------------------------------------------------
+     One scale, shared with src/utils/motion.js. The JS values are the same
+     numbers in seconds, so a CSS hover and a JS entrance on the same element
+     move at the same speed. Change one, change the other.
+
+     Three curves, each with a job:
+       entrance  things arriving — decelerate hard, settle softly
+       ui        hover, focus, press — short and crisp at both ends
+       exit      things leaving — accelerate away, no lingering
+     --------------------------------------------------------------------- */
+  --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --dur-instant: 120ms;
+  --dur-fast: 200ms;
+  --dur-base: 320ms;
+  --dur-slow: 480ms;
+  --dur-slower: 680ms;
 
   /* ---- Z layers ---------------------------------------------------------- */
   --z-base: 0;

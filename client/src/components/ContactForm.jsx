@@ -2,7 +2,7 @@ import { m } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import siteContent from '../content/siteContent.json';
 import { fadeUpProps } from '../utils/motion';
-import { buildApiUrl } from '../utils/api';
+import { buildApiUrl, readApiResponse } from '../utils/api';
 import { hasSuspiciousInput, sanitizeInput } from '../utils/inputSecurity';
 import { validatePhoneNumber } from '../utils/phoneValidation';
 import CountryCodeSelect from './CountryCodeSelect';
@@ -114,11 +114,12 @@ export default function ContactForm({ initialMessage = '' }) {
         body: JSON.stringify(payload)
       });
 
-      const data = await response.json().catch(() => ({}));
-      setStatusType(response.ok ? 'success' : 'error');
-      setStatus(data.message || messages.requestFailed);
+      // Success requires a 2xx *and* a JSON body — see readApiResponse.
+      const { ok, message } = await readApiResponse(response);
+      setStatusType(ok ? 'success' : 'error');
+      setStatus(message || (ok ? messages.success : messages.requestFailed));
 
-      if (response.ok) {
+      if (ok) {
         setValues({ ...EMPTY });
         setCountryCode('IN');
       }

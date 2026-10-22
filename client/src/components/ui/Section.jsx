@@ -1,5 +1,5 @@
 import { m } from 'framer-motion';
-import { duration, easing, viewport } from '../../utils/motion';
+import { duration, ease, viewport } from '../../utils/motion';
 
 const TONE_CLASS = {
   default: '',
@@ -51,8 +51,15 @@ export default function Section({
   );
 }
 
-/** A block that fades up once, the first time it scrolls into view. */
-export function Reveal({ as = 'div', className = '', children, delay = 0, y = 22, ...rest }) {
+/**
+ * A block that fades up once, the first time it scrolls into view.
+ *
+ * Fires once and never re-animates on scroll-back — repeating entrances as
+ * the reader moves up and down the page is the single most distracting
+ * thing a reveal can do. Under reduced motion MotionConfig strips the
+ * translate and this becomes a plain fade.
+ */
+export function Reveal({ as = 'div', className = '', children, delay = 0, y = 18, ...rest }) {
   const Component = m[as] || m.div;
   return (
     <Component
@@ -60,7 +67,7 @@ export function Reveal({ as = 'div', className = '', children, delay = 0, y = 22
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={viewport}
-      transition={{ duration: duration.slow, ease: easing, delay }}
+      transition={{ duration: duration.slow, ease: ease.entrance, delay }}
       {...rest}
     >
       {children}

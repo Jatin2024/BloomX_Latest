@@ -14,6 +14,10 @@
 const UNSPLASH_HOST = 'https://images.unsplash.com';
 const DEFAULT_WIDTHS = [480, 768, 1024, 1440, 1920];
 
+/* Quality 60 is indistinguishable here once the duotone treatment is applied
+   and the delivered format is AVIF/WebP via `auto=format`. */
+const DEFAULT_QUALITY = 60;
+
 /** Photo ids verified to resolve against images.unsplash.com. */
 export const media = {
   heroWorkspace: {
@@ -78,7 +82,7 @@ export const media = {
   }
 };
 
-function unsplashUrl(id, width, ratio, quality) {
+export function unsplashUrl(id, width, ratio, quality = DEFAULT_QUALITY, desaturate = false) {
   const params = new URLSearchParams({
     auto: 'format',
     fit: 'crop',
@@ -88,6 +92,13 @@ function unsplashUrl(id, width, ratio, quality) {
 
   if (ratio) {
     params.set('h', String(Math.round((width * ratio[1]) / ratio[0])));
+  }
+
+  // Images rendered with the duotone treatment are greyscaled in CSS anyway,
+  // so asking the CDN for a desaturated original costs nothing visually and
+  // compresses roughly 20% smaller.
+  if (desaturate) {
+    params.set('sat', '-100');
   }
 
   return `${UNSPLASH_HOST}/${id}?${params.toString()}`;
@@ -108,16 +119,19 @@ export function buildImage(source, options = {}) {
     ratio,
     sizes = '100vw',
     widths = DEFAULT_WIDTHS,
-    quality = 72,
+    quality = DEFAULT_QUALITY,
     priority = false,
+    desaturate = false,
     alt
   } = options;
 
   const largest = widths[widths.length - 1];
 
   return {
-    src: unsplashUrl(source.id, largest, ratio, quality),
-    srcSet: widths.map((w) => `${unsplashUrl(source.id, w, ratio, quality)} ${w}w`).join(', '),
+    src: unsplashUrl(source.id, largest, ratio, quality, desaturate),
+    srcSet: widths
+      .map((w) => `${unsplashUrl(source.id, w, ratio, quality, desaturate)} ${w}w`)
+      .join(', '),
     sizes,
     alt: alt === undefined ? source.alt : alt,
     width: largest,
@@ -126,6 +140,8 @@ export function buildImage(source, options = {}) {
     decoding: priority ? 'sync' : 'async',
     // Lowercase: React 18 passes unknown all-lowercase attributes straight
     // through, while `fetchPriority` (React 19 spelling) warns here.
-    fetchpriority: priority ? 'high' : undefined
+    // Below-the-fold art is explicitly deprioritised so it cannot compete
+    // with the hero for bandwidth on a slow connection.
+    fetchpriority: priority ? 'high' : 'low'
   };
 }

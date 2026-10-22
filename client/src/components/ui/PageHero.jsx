@@ -1,6 +1,6 @@
 import { m } from 'framer-motion';
 import { Eyebrow } from './Primitives';
-import { duration, easing, lineReveal, stagger } from '../../utils/motion';
+import { cascade, lineReveal, riseIn, stagger } from '../../utils/motion';
 
 /**
  * Shared opening band for inner pages. Keeps every page's first screen on
@@ -12,17 +12,12 @@ export default function PageHero({ eyebrow, title, text, children, aside }) {
       <div className="bx-shell">
         <m.div
           className="bx-page-hero__grid"
-          variants={stagger(0.08, 0.05)}
+          variants={cascade(stagger.loose, 0.04)}
           initial="hidden"
           animate="visible"
         >
           <div className="bx-stack">
-            <m.div
-              variants={{
-                hidden: { opacity: 0, y: 8 },
-                visible: { opacity: 1, y: 0, transition: { duration: duration.base, ease: easing } }
-              }}
-            >
+            <m.div variants={riseIn}>
               <Eyebrow>{eyebrow}</Eyebrow>
             </m.div>
 
@@ -35,13 +30,7 @@ export default function PageHero({ eyebrow, title, text, children, aside }) {
             </h1>
           </div>
 
-          <m.div
-            className="bx-stack bx-stack--sm"
-            variants={{
-              hidden: { opacity: 0, y: 14 },
-              visible: { opacity: 1, y: 0, transition: { duration: duration.slow, ease: easing } }
-            }}
-          >
+          <m.div className="bx-stack bx-stack--sm" variants={riseIn}>
             {text && <p className="bx-page-hero__text">{text}</p>}
             {aside}
           </m.div>

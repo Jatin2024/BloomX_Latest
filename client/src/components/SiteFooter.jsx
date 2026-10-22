@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import siteContent from '../content/siteContent.json';
 import { services } from '../content/catalog';
+import EmailLink from './ui/EmailLink';
 
 const { footer, header, site } = siteContent;
 
@@ -56,7 +57,7 @@ export default function SiteFooter() {
             <ul className="bx-footer__list">
               <li className="bx-footer__contact-item">
                 <span className="bx-footer__contact-label">{footer.labels.email}</span>
-                <a href={`mailto:${footer.contact.email}`}>{footer.contact.email}</a>
+                <EmailLink email={footer.contact.email} subject={siteContent.contact.emailSubject} onDark />
               </li>
               <li className="bx-footer__contact-item">
                 <span className="bx-footer__contact-label">{footer.labels.phone}</span>
@@ -65,6 +66,7 @@ export default function SiteFooter() {
               <li className="bx-footer__contact-item">
                 <span className="bx-footer__contact-label">{footer.labels.location}</span>
                 <span>{footer.contact.location}</span>
+                <span className="bx-contact-note">{footer.contact.locationNote}</span>
               </li>
             </ul>
           </div>

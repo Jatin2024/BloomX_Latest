@@ -119,7 +119,8 @@
     "why": {
       "eyebrow": "Why BloomX",
       "title": "What you can reasonably expect from working with us.",
-      "text": "No awards, no client logo wall, no invented numbers. Here is what we actually commit to on every project."
+      "text": "No awards, no client logo wall, no invented numbers. Here is what we actually commit to on every project.",
+      "quote": "Scope it honestly, build it carefully, stay available afterwards. Everything else is marketing."
     },
     "cta": {
       "eyebrow": "Start a project",
@@ -214,7 +215,8 @@
         "email": "Enter a valid email address.",
         "resume": "Attach your resume to apply.",
         "whyHire": "Tell us briefly why you are a good fit.",
-        "position": "Select the role you are applying for."
+        "position": "Select the role you are applying for.",
+        "success": "Thanks — your application is with us."
       }
     }
   },
@@ -259,14 +261,16 @@
         "firstName": "First name is required.",
         "lastName": "Last name is required.",
         "email": "Enter a valid email address.",
-        "message": "Please tell us a little about the project."
+        "message": "Please tell us a little about the project.",
+        "success": "Thanks — your enquiry is with us. We will reply shortly."
       }
-    }
+    },
+    "emailSubject": "Project enquiry"
   },
   "notFound": {
     "meta": {
       "title": "Page not found | BloomX Technologies",
-      "description": "The page you were looking for does not exist."
+      "description": "That page does not exist on the BloomX Technologies site. Browse our services, selected work, or get in touch about a project."
     },
     "code": "404",
     "title": "That page doesn’t exist.",
@@ -280,7 +284,11 @@
       "searchPlaceholder": "Search country",
       "empty": "No countries match that search"
     },
-    "required": "required"
+    "required": "required",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyEmail": "Copy email address",
+    "copiedAnnouncement": "Email address copied to clipboard"
   },
   "footer": {
     "statement": "A web development studio building websites, applications and APIs for businesses that need them to keep working.",
@@ -292,12 +300,13 @@
     "labels": {
       "email": "Email",
       "phone": "Phone",
-      "location": "Location"
+      "location": "Where we work"
     },
     "contact": {
-      "email": "hello@bloomx.com",
+      "email": "admin@bloomxtechnologies.com",
       "phone": "+91 72062 74898",
-      "location": "Remote-first, serving clients worldwide"
+      "location": "Remote-first",
+      "locationNote": "Working with clients worldwide"
     },
     "copy": "© 2026 BloomX Technologies. All rights reserved.",
     "bottomLinks": [

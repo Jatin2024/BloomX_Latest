@@ -2,7 +2,7 @@ import { AnimatePresence, m } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import siteContent from '../content/siteContent.json';
-import { easing } from '../utils/motion';
+import { cascade, duration, ease, riseIn, stagger } from '../utils/motion';
 
 const { header, footer, site } = siteContent;
 
@@ -90,7 +90,7 @@ export default function SiteHeader() {
         data-state={state}
         initial={{ y: -16, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.45, ease: easing }}
+        transition={{ duration: duration.slow, ease: ease.entrance }}
       >
         <div className="bx-header__inner">
           <NavLink to="/" className="bx-brand" aria-label={`${site.name} — home`}>
@@ -143,15 +143,20 @@ export default function SiteHeader() {
             id="bx-mobile-nav"
             ref={panelRef}
             className="bx-mobile-nav"
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.26, ease: easing }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0, transition: { duration: duration.base, ease: ease.entrance } }}
+            exit={{ opacity: 0, y: -10, transition: { duration: duration.fast, ease: ease.exit } }}
           >
-            <nav className="bx-mobile-nav__links" aria-label="Mobile">
+            <m.nav
+              className="bx-mobile-nav__links"
+              aria-label="Mobile"
+              variants={cascade(stagger.tight, 0.06)}
+              initial="hidden"
+              animate="visible"
+            >
               {header.nav.map((item, index) => (
+                <m.div key={item.to} variants={riseIn}>
                 <NavLink
-                  key={item.to}
                   to={item.to}
                   end={item.to === '/'}
                   className="bx-mobile-nav__link"
@@ -160,8 +165,9 @@ export default function SiteHeader() {
                   <span className="bx-mobile-nav__index">{String(index + 1).padStart(2, '0')}</span>
                   {item.label}
                 </NavLink>
+                </m.div>
               ))}
-            </nav>
+            </m.nav>
 
             <div className="bx-mobile-nav__footer">
               <NavLink

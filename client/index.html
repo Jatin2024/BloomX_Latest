@@ -38,6 +38,45 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+
+    <!--
+      Hero image preload (home route only).
+
+      Without this the hero photograph cannot start downloading until the JS
+      bundle has parsed and React has rendered — measured at ~800ms on a
+      throttled connection. Injecting the link here starts the fetch during
+      HTML parse instead, several hundred milliseconds earlier.
+
+      This is a script rather than a static <link> because one index.html
+      serves every route: a static preload would pull the home hero down on
+      /services, /work and the rest, where it is never rendered.
+
+      The values MUST mirror the `heroImage` descriptor in
+      src/sections/Hero.jsx (same id, ratio, widths, quality and sizes) or
+      the browser will download the photograph twice.
+    -->
+    <script>
+      (function () {
+        if (window.location.pathname !== '/') return;
+        var id = 'photo-1550439062-609e1531270e';
+        var url = function (w) {
+          return (
+            'https://images.unsplash.com/' + id +
+            '?auto=format&fit=crop&w=' + w + '&q=60&h=' + Math.round((w * 5) / 4)
+          );
+        };
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.setAttribute('fetchpriority', 'high');
+        link.imageSrcset = [480, 720, 960, 1280]
+          .map(function (w) { return url(w) + ' ' + w + 'w'; })
+          .join(', ');
+        link.imageSizes = '(min-width: 1024px) 46vw, 92vw';
+        link.href = url(1280);
+        document.head.appendChild(link);
+      })();
+    </script>
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 /* -------------------------------------------------------------------------
@@ -23,6 +24,7 @@ export function SectionHeading({
   text,
   align = 'start',
   split = false,
+  variant,
   level: Level = 'h2',
   actions,
   className = ''
@@ -45,6 +47,8 @@ export function SectionHeading({
   const classes = [
     'bx-heading',
     split ? 'bx-heading--split' : '',
+    variant === 'stacked' ? 'bx-heading--stacked' : '',
+    variant === 'statement' ? 'bx-heading--statement' : '',
     align === 'center' ? 'bx-heading--center' : '',
     className
   ]
@@ -52,6 +56,45 @@ export function SectionHeading({
     .join(' ');
 
   return <div className={classes}>{body}</div>;
+}
+
+/**
+ * A run of reference terms as a single mono caption line. Used instead of
+ * pill clusters wherever the terms are information, not controls.
+ */
+export function MetaLine({ items, className = '', lead = false }) {
+  if (!items || !items.length) return null;
+  return (
+    <p className={`bx-meta${lead ? ' bx-meta--lead' : ''}${className ? ` ${className}` : ''}`}>
+      {items.map((item, index) => (
+        <Fragment key={item}>
+          {/* The spaces inside the separator are load-bearing: without real
+              whitespace the whole run is one unbreakable word and overflows
+              its column. */}
+          {index > 0 && (
+            <span className="bx-meta__sep" aria-hidden="true">
+              {' / '}
+            </span>
+          )}
+          {item}
+        </Fragment>
+      ))}
+    </p>
+  );
+}
+
+/** Key/value reference rows — technology groups, project specifications. */
+export function DefList({ rows, className = '' }) {
+  return (
+    <dl className={`bx-deflist${className ? ` ${className}` : ''}`}>
+      {rows.map((row) => (
+        <div className="bx-deflist__row" key={row.key}>
+          <dt className="bx-deflist__key">{row.key}</dt>
+          <dd className="bx-deflist__value">{row.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
 }
 
 const BUTTON_VARIANTS = {
@@ -176,34 +219,5 @@ export function Tags({ items, onDark = false, accent = false, className = '' }) 
         </li>
       ))}
     </ul>
-  );
-}
-
-/**
- * Image frame. Always renders with an explicit aspect ratio so nothing
- * reflows while the photograph loads.
- */
-export function Figure({
-  image,
-  className = '',
-  treatment = 'scrim',
-  zoom = true,
-  children
-}) {
-  const classes = [
-    'bx-figure',
-    treatment === 'scrim' ? 'bx-figure--scrim' : '',
-    treatment === 'tinted' ? 'bx-figure--tinted' : '',
-    zoom ? 'bx-figure--zoom' : '',
-    className
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  return (
-    <figure className={classes}>
-      <img {...image} />
-      {children}
-    </figure>
   );
 }

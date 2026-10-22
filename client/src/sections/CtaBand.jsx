@@ -1,5 +1,6 @@
 import Section, { Reveal } from '../components/ui/Section';
 import { ArrowIcon, ButtonLink, Eyebrow } from '../components/ui/Primitives';
+import EmailLink from '../components/ui/EmailLink';
 import siteContent from '../content/siteContent.json';
 
 const { footer } = siteContent;
@@ -34,7 +35,7 @@ export default function CtaBand({ copy = defaultCopy, secondaryTo = '/services' 
             <div className="bx-cta__direct">
               <div className="bx-cta__direct-item">
                 <span className="bx-cta__direct-label">{footer.labels.email}</span>
-                <a href={`mailto:${footer.contact.email}`}>{footer.contact.email}</a>
+                <EmailLink email={footer.contact.email} subject={siteContent.contact.emailSubject} onDark />
               </div>
               <div className="bx-cta__direct-item">
                 <span className="bx-cta__direct-label">{footer.labels.phone}</span>

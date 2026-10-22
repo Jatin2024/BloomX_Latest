@@ -1,5 +1,5 @@
 import { m } from 'framer-motion';
-import { easing } from '../../utils/motion';
+import { duration, ease } from '../../utils/motion';
 
 /**
  * Brand lattice — an abstract redraw of the BloomX emblem: the two-tone X,
@@ -12,8 +12,8 @@ import { easing } from '../../utils/motion';
  */
 
 const drawTransition = (delay) => ({
-  pathLength: { duration: 1.1, ease: easing, delay },
-  opacity: { duration: 0.3, delay }
+  pathLength: { duration: duration.slower, ease: ease.entrance, delay },
+  opacity: { duration: duration.base, delay }
 });
 
 const TRACES = [
@@ -69,7 +69,7 @@ export default function BloomMark({ className = '', animate = true }) {
         strokeWidth="1"
         strokeDasharray="4 7"
         {...draw}
-        transition={drawTransition(0.1)}
+        transition={drawTransition(0.06)}
       />
 
       {/* Circuit traces, as on the emblem's outer band */}
@@ -82,7 +82,7 @@ export default function BloomMark({ className = '', animate = true }) {
             strokeLinecap="round"
             strokeLinejoin="round"
             {...draw}
-            transition={drawTransition(0.25 + index * 0.08)}
+            transition={drawTransition(0.16 + index * 0.05)}
           />
           <m.circle
             cx={trace.node[0]}
@@ -91,7 +91,7 @@ export default function BloomMark({ className = '', animate = true }) {
             fill="#6B99CF"
             initial={animate ? { opacity: 0, scale: 0 } : false}
             animate={animate ? { opacity: 1, scale: 1 } : undefined}
-            transition={{ duration: 0.3, ease: easing, delay: 0.85 + index * 0.08 }}
+            transition={{ duration: duration.base, ease: ease.entrance, delay: 0.52 + index * 0.05 }}
             style={{ transformOrigin: `${trace.node[0]}px ${trace.node[1]}px` }}
           />
         </g>
@@ -105,21 +105,21 @@ export default function BloomMark({ className = '', animate = true }) {
         strokeWidth="1"
         initial={animate ? { opacity: 0, y: 14 } : false}
         animate={animate ? { opacity: 1, y: 0 } : undefined}
-        transition={{ duration: 0.6, ease: easing, delay: 0.3 }}
+        transition={{ duration: duration.slow, ease: ease.entrance, delay: 0.18 }}
       />
       <m.path
         d="M54 62 H94 L244 238 H204 Z"
         fill="url(#bx-mark-blue)"
         initial={animate ? { opacity: 0, y: 14 } : false}
         animate={animate ? { opacity: 1, y: 0 } : undefined}
-        transition={{ duration: 0.6, ease: easing, delay: 0.42 }}
+        transition={{ duration: duration.slow, ease: ease.entrance, delay: 0.26 }}
       />
 
       {/* Bloom: three leaves above the crossing, as in the logo */}
       <m.g
         initial={animate ? { opacity: 0, scale: 0.7 } : false}
         animate={animate ? { opacity: 1, scale: 1 } : undefined}
-        transition={{ duration: 0.5, ease: easing, delay: 0.72 }}
+        transition={{ duration: duration.slow, ease: ease.entrance, delay: 0.44 }}
         style={{ transformOrigin: '150px 122px' }}
       >
         {[-34, 0, 34].map((angle) => (

@@ -61,6 +61,12 @@
   color: var(--text-on-dark-muted);
 }
 
+/* Closes tight at the foot — used where a section ends on a hairline rule
+   and a full pad underneath would read as dead space. */
+.bx-section--close {
+  padding-bottom: var(--section-y-tight);
+}
+
 .bx-section--rule-top {
   border-top: 1px solid var(--line);
 }
@@ -137,6 +143,30 @@
   .bx-heading--split .bx-heading__aside {
     padding-bottom: 0.35rem;
   }
+}
+
+/* Stacked variant: title then supporting copy directly beneath at a short
+   measure. Used to break up the run of split headings down the page. */
+.bx-heading--stacked {
+  max-width: 54rem;
+  gap: var(--space-5);
+}
+
+.bx-heading--stacked .bx-heading__title {
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+  max-width: 16ch;
+}
+
+.bx-heading--stacked .bx-heading__aside {
+  max-width: 46ch;
+  padding-left: clamp(0rem, 6vw, 5rem);
+}
+
+/* Oversized typographic variant for the page-defining statement. */
+.bx-heading--statement .bx-heading__title {
+  font-size: clamp(2.25rem, 1.3rem + 3.6vw, 4rem);
+  letter-spacing: var(--tracking-display);
+  max-width: 15ch;
 }
 
 /* ---- Editorial grid ------------------------------------------------------ */
